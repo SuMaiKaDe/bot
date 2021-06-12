@@ -310,6 +310,8 @@ async def cronup(jdbot, conv, resp, filename, msg, SENDER, markup, path):
         convmsg = await conv.send_message(f'```{crondata}```\n请输入您要修改内容，可以直接点击上方定时进行复制修改')
         crondata = await conv.get_response()
         crondata = crondata.raw_text
+        if QL:
+            crondata = json.loads(crondata)
         await jdbot.delete_messages(chat_id, convmsg)
     if QL:
         with open(_Auth, 'r', encoding='utf-8') as f:
