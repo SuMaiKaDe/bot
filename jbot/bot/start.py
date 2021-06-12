@@ -1,17 +1,11 @@
+from telethon import events
+from .. import jdbot, chat_id
 
-## 使用方法：
-- 使用方法
-    - ~~将bot.py、bot.json、rebot.sh放入/jd/config文件夹下(旧版本使用方法)~~
-    - 在docker内执行`apk add python3`
-    - 如需扫码获取cookie及获取图片 需执行`apk add zlib-dev gcc jpeg-dev python3-dev musl-dev freetype-dev`
-    - 由于需要安装多个依赖包，建议将清华源设置为默认源`pip3 config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple`
-    - 执行`pip3 install telethon python-socks[asyncio] pillow qrcode requests prettytable`
-    - 或者下载requirements.txt `pip3 install -r requirements.txt`
-    - 下载jbot文件夹 放在、/jd或/ql目录下，下载config/bot.json放在config下，在jd或ql目录下运行 `nohup python3 -m jbot >/dev/null 2>&1 &`
-    - 如果需要更换机器人token，需要将bot.session删除后，重新运行 
-***
-## 主要实现功能：
-- 主要功能
+
+@jdbot.on(events.NewMessage(from_users=chat_id, pattern='/start'))
+async def mystart(event):
+    '''接收/start命令后执行程序'''
+    msg = '''使用方法如下：
     /help 获取命令，可直接发送至botfather。
     /start 开始使用本程序。
     /a 使用你的自定义快捷按钮。
@@ -28,8 +22,4 @@
     /set 设置
     /dl 下载
     此外直接发送文件，会让您选择保存到哪个文件夹，如果选择运行，将保存至own目录下，并立即运行脚本'''
-
-[交流频道](https://t.me/tiangongtong)
-青龙与V4均可使用
-
-# 严禁任何人以任何形式放置在收费项目中
+    await jdbot.send_message(chat_id, msg)
