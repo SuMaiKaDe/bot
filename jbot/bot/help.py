@@ -16,7 +16,6 @@ chart-统计收支变化
 cmd-执行cmd命令
 edit-编辑文件
 dl-下载文件
-getck-扫码获取ck并自动替换
 getcookie-扫码获取cookie
 getfile-获取jd目录下文件
 log-选择日志
