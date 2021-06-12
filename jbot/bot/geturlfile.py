@@ -18,8 +18,8 @@ async def mycodes(event):
         resp = requests.get(url).text
         v4btn = [[Button.inline('放入config', data=_ConfigDir), Button.inline('放入scripts', data=_ScriptsDir), Button.inline('放入OWN文件夹', data=_DiyDir)], [
             Button.inline('放入scripts并运行', data='node1'), Button.inline('放入OWN并运行', data='node'), Button.inline('取消', data='cancel')]]
-        btn = [[Button.inline('放入config', data=_ConfigDir), Button.inline('放入scripts', data=_ScriptsDir), [
-            Button.inline('放入scripts并运行', data='node1'), Button.inline('取消', data='cancel')]]]
+        btn = [[Button.inline('放入config', data=_ConfigDir), Button.inline('放入scripts', data=_ScriptsDir)], [
+            Button.inline('放入scripts并运行', data='node1'), Button.inline('取消', data='cancel')]]
         if resp:
             cmdtext = None
             markup = []
