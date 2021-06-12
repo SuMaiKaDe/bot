@@ -10,18 +10,18 @@ async def myhelp(event):
     else:
         text = 'mhelp'
     mhelp = '''
-a-我的自定义快捷按钮
+a-自定义快捷按钮
 bean-获取收支
 chart-统计收支变化
 cmd-执行cmd命令
 edit-编辑文件
+dl-下载文件
 getck-扫码获取ck并自动替换
 getcookie-扫码获取cookie
 getfile-获取jd目录下文件
 log-选择日志
-dl-下载文件
-set-机器人设置
 node-执行js脚本文件，绝对路径
+set-BOT设置
 setshort-设置自定义按钮
 snode-选择脚本后台运行
 start-开始使用本程序'''
