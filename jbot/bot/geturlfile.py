@@ -13,7 +13,7 @@ async def mycodes(event):
         msg = await jdbot.send_message(chat_id, '请稍后正在下载文件')
         url = event.raw_text.split(' ')[-1]
         if url.startswith('https://raw.githubusercontent.com'):
-            url = f'http://ghproxy.com/{url}'
+            url = f'https://ghproxy.com/{url}'
         filename = url.split('/')[-1]
         resp = requests.get(url).text
         v4btn = [[Button.inline('放入config', data=_ConfigDir), Button.inline('放入scripts', data=_ScriptsDir), Button.inline('放入OWN文件夹', data=_DiyDir)], [
