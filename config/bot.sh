@@ -69,7 +69,6 @@ echo -e "\nbot依赖安装成功...\n"
 echo -e "2、下载bot所需文件...\n"
 if [ -d ${repo_path}/.git ]; then
     jbot_md5sum_old=$(cd $dir_bot; find . -type f \( -name "*.py" -o -name "*.ttf" \) | xargs md5sum)
-    reset_romote_url ${repo_path} ${url}
     git_pull_scripts ${repo_path}
     cp -rf "$repo_path/jbot" $dir_root
     jbot_md5sum_new=$(cd $dir_bot; find . -type f \( -name "*.py" -o -name "*.ttf" \) | xargs md5sum)
