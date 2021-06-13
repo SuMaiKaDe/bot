@@ -93,9 +93,13 @@ echo -e "4、启动bot程序...\n"
 cd $dir_root
 mkdir $dir_root/log/bot
 if [[ -z $(grep -E "123456789" $dir_root/config/bot.json) ]]; then
-    ps -ef | grep "python3 -m jbot" | grep -v grep | awk '{print $1}' | xargs kill -9 2>/dev/null
-    nohup python3 -m jbot >$dir_root/log/bot/bot.log 2>&1 &
-    echo -e "bot启动成功...\n"
+    if if [ -d "/ql" ];then
+        ps -ef | grep "python3 -m jbot" | grep -v grep | awk '{print $1}' | xargs kill -9 2>/dev/null
+        nohup python3 -m jbot >$dir_root/log/bot/bot.log 2>&1 &
+        echo -e "bot启动成功...\n"
+    else
+        pm2 restart jbot
+    fi
 else
     echo -e  "似乎 $dir_root/config/bot.json 还未修改为你自己的信息，可能是首次部署容器，因此不启动Telegram Bot...\n配置好bot.json后再次运行本程序即可启动"
 fi
