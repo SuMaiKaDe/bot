@@ -12,6 +12,7 @@ file_bot_setting_user=$dir_root/config/bot.json
 repo_path="${dir_repo}/SuMaiKaDe_bot"
 url="https://ghproxy.com/https://github.com/SuMaiKaDe/bot.git"
 repo_path="${dir_repo}/dockerbot"
+
 git_pull_scripts() {
     local dir_current=$(pwd)
     local dir_work="$1"
@@ -79,7 +80,6 @@ else
   git_clone_scripts ${url} ${repo_path} "main"
   cp -rf "$repo_path/jbot" $dir_root
 fi
-cp -rf "$repo_path/config/bot.sh" "$dir_root/config"
 if [[ ! -f "$dir_root/config/bot.json" ]]; then
   cp -f "$repo_path/config/bot.json" "$dir_root/config"
 fi
@@ -91,9 +91,11 @@ pip3 --default-timeout=100 install -r requirements.txt --no-cache-dir
 echo -e "\npython3依赖安装成功...\n"
 echo -e "4、启动bot程序...\n"
 cd $dir_root
-mkdir $dir_root/log/bot
+if [ ! -d "/ql/log/bot" ]; then
+    mkdir $dir_root/log/bot
+fi
 if [[ -z $(grep -E "123456789" $dir_root/config/bot.json) ]]; then
-    if if [ -d "/ql" ];then
+    if [ -d "/ql" ]; then
         ps -ef | grep "python3 -m jbot" | grep -v grep | awk '{print $1}' | xargs kill -9 2>/dev/null
         nohup python3 -m jbot >$dir_root/log/bot/bot.log 2>&1 &
         echo -e "bot启动成功...\n"
