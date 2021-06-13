@@ -5,6 +5,7 @@
     - 在docker内执行`apk add python3`
     - 如需扫码获取cookie及获取图片 需执行`apk add zlib-dev gcc jpeg-dev python3-dev musl-dev freetype-dev`
     - 由于需要安装多个依赖包，建议将清华源设置为默认源`pip3 config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple`
+    - 如果清华源下载慢，可以改成 `pip3 config set global.index-url https://pypi.mirrors.ustc.edu.cn/simple/`
     - 执行`pip3 install telethon python-socks[asyncio] pillow qrcode requests prettytable`
     - 或者下载requirements.txt `pip3 install -r requirements.txt`
     - 下载jbot文件夹 放在、/jd或/ql目录下，下载config/bot.json放在config下，在jd或ql目录下运行 `nohup python3 -m jbot >/dev/null 2>&1 &`
