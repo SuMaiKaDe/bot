@@ -2,7 +2,7 @@ from telethon import events, Button
 import requests
 from asyncio import exceptions
 from .. import jdbot, chat_id, logger, _ScriptsDir, _ConfigDir, logger
-from .utils import press_event, backfile, _DiyDir, jdcmd, V4, cmd, cronup
+from .utils import press_event, backfile, _DiyDir, jdcmd, V4, cmd, cronup, mybot
 
 
 @jdbot.on(events.NewMessage(from_users=chat_id, pattern=r'^/dl'))
@@ -12,8 +12,8 @@ async def mycodes(event):
         SENDER = event.sender_id
         msg = await jdbot.send_message(chat_id, '请稍后正在下载文件')
         url = event.raw_text.split(' ')[-1]
-        if url.startswith('https://raw.githubusercontent.com'):
-            url = f'https://ghproxy.com/{url}'
+        if '下载代理' in mybot.keys() and str(mybot['下载代理']).lower() != 'false' and 'github' in url:
+            url = f'{str(mybot["下载代理"])}/{url}'
         filename = url.split('/')[-1]
         resp = requests.get(url).text
         v4btn = [[Button.inline('放入config', data=_ConfigDir), Button.inline('放入scripts', data=_ScriptsDir), Button.inline('放入OWN文件夹', data=_DiyDir)], [

@@ -1,15 +1,18 @@
 
-## 使用方法：
-- 使用方法
-    - ~~将bot.py、bot.json、rebot.sh放入/jd/config文件夹下(旧版本使用方法)~~
-    - 在docker内执行`apk add python3`
-    - 如需扫码获取cookie及获取图片 需执行`apk add zlib-dev gcc jpeg-dev python3-dev musl-dev freetype-dev`
-    - 由于需要安装多个依赖包，建议将清华源设置为默认源`pip3 config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple`
-    - 如果清华源下载慢，可以改成 `pip3 config set global.index-url https://pypi.mirrors.ustc.edu.cn/simple/`
-    - 执行`pip3 install telethon python-socks[asyncio] pillow qrcode requests prettytable`
-    - 或者下载requirements.txt `pip3 install -r requirements.txt`
-    - 下载jbot文件夹 放在、/jd或/ql目录下，下载config/bot.json放在config下，在jd或ql目录下运行 `nohup python3 -m jbot >/dev/null 2>&1 &`
-    - 如果需要更换机器人token，需要将bot.session删除后，重新运行 
+## 使用方法 一：
+#### 下载config目录下bot.sh，放在容器内config目录下，并在容器终端内执行bash bot.sh；之后填写容器内config/bot.json，再次运行 bot.sh
+***
+## 使用方法 二：
+- ~~将bot.py、bot.json、rebot.sh放入/jd/config文件夹下(旧版本使用方法)~~
+- 在docker内执行`apk add python3`
+- 如需扫码获取cookie及获取图片 需执行`apk add zlib-dev gcc jpeg-dev python3-dev musl-dev freetype-dev`
+- 由于需要安装多个依赖包，建议将清华源设置为默认源`pip3 config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple`
+- 如果清华源下载慢，可以改成 `pip3 config set global.index-url https://pypi.mirrors.ustc.edu.cn/simple/`
+- 执行`pip3 install telethon python-socks[asyncio] pillow qrcode requests prettytable`
+- 或者下载requirements.txt `pip3 install -r requirements.txt`
+- 下载jbot文件夹 放在、/jd或/ql目录下，下载config/bot.json放在config下，修改bot.json内容
+- 在jd或ql目录下运行 `nohup python3 -m jbot >/dev/null 2>&1 &`
+- 如果需要更换机器人token，需要将bot.session删除后，重新运行 
 ***
 ## 主要实现功能：
 - 主要功能
@@ -29,9 +32,9 @@
     - set 设置
     - dl 下载
     此外直接发送文件，会让您选择保存到哪个文件夹，如果选择运行，将保存至own目录下，并立即运行脚本'''
-
+***
 ## [交流频道](https://t.me/tiangongtong)
-
+***
 ## 青龙与V4均可使用
-
+***
 # 严禁任何人以任何形式放置在收费项目中

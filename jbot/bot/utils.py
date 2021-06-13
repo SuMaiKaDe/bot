@@ -15,7 +15,8 @@ V4, QL = False, False
 if 'JD_DIR' in os.environ.keys():
     V4 = True
     _Auth = None
-    _ConfigFile = f'{_ConfigDir}/config.sh'
+    if os.path.exists(f'{_ConfigDir}/cookie.sh'):
+        _ConfigFile = f'{_ConfigDir}/cookie.sh'
     _DiyDir = _OwnDir
     jdcmd = 'jtask'
 elif 'QL_DIR' in os.environ.keys():
@@ -214,7 +215,7 @@ async def nodebtn(conv, SENDER, path, msg, page, filelist):
                 dir = ['scripts']
             else:
                 dir = os.listdir(path)
-                if mybot['中文'] == "True":
+                if mybot['中文'].lower() == "true":
                     dir = getname(path, dir)
             dir.sort()
             markup = [Button.inline(file.split('--->')[0], data=str(file.split('--->')[-1]))
