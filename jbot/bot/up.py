@@ -3,7 +3,7 @@ from .. import jdbot, chat_id, _ConfigDir
 from .utils import cmd
 
 @jdbot.on(events.NewMessage(from_users=chat_id, pattern='^/up$'))
-async def mycodes():
+async def myup(event):
     try:
         msg = await jdbot.send_message(chat_id,'开始更新程序，请稍候')
         await cmd(f'bash {_ConfigDir}/bot.sh')
