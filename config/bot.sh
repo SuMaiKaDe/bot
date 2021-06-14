@@ -101,7 +101,8 @@ if [[ -z $(grep -E "123456789" $dir_root/config/bot.json) ]]; then
         echo -e "bot启动成功...\n"
     else
         cd $dir_bot
-        pm2 start jbot
+        pm2 start ecosystem.config.js
+        cd $dir_root
         pm2 restart jbot
         echo -e "bot启动成功...\n"
     fi
