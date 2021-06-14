@@ -1,40 +1,47 @@
 
-## 使用方法 一：
-#### 下载config目录下bot.sh，放在容器内config目录下，并在容器终端内执行bash bot.sh；之后填写容器内config/bot.json，再次运行 bot.sh
-***
-## 使用方法 二：
-- ~~将bot.py、bot.json、rebot.sh放入/jd/config文件夹下(旧版本使用方法)~~
-- 在docker内执行`apk add python3`
-- 如需扫码获取cookie及获取图片 需执行`apk add zlib-dev gcc jpeg-dev python3-dev musl-dev freetype-dev`
-- 由于需要安装多个依赖包，建议将阿里设置为默认源`pip3 config set global.index-url https://mirrors.aliyun.com/pypi/simple/`
-- 如果阿里源下载慢，可以改成 `pip3 config set global.index-url https://pypi.mirrors.ustc.edu.cn/simple/`
-- 执行`pip3 install telethon python-socks[asyncio] pillow qrcode requests prettytable`
-- 或者下载requirements.txt `pip3 install -r requirements.txt`
-- 下载jbot文件夹 放在、/jd或/ql目录下，下载config/bot.json放在config下，修改bot.json内容
-- 在jd或ql目录下运行 `nohup python3 -m jbot >/dev/null 2>&1 &`
-- 如果需要更换机器人token，需要将bot.session删除后，重新运行 
-***
-## 主要实现功能：
-- 主要功能
-    - help 获取命令，可直接发送至botfather。
-    - start 开始使用本程序。
-    - a 使用你的自定义快捷按钮。
-    - bean 获取京豆变化，默认为总京豆收支。/bean in 京豆进账，/bean out 京豆支出。
-    - chart 获取京豆变化数据柱状图和曲线图。例，/chart 1，获取账号1的京豆变化。
-    - cmd 执行cmd命令,例如/cmd python3 /python/bot.py 则将执行python目录下的bot.py 不建议使用机器人使用并发，可能产生不明原因的崩溃。 
-    - edit 从jd目录下选择文件编辑，需要将编辑好信息全部发给机器人，机器人会根据你发的信息进行替换。建议用来编辑config或crontab.list 其他文件慎用！！！
-    - getcookie 扫码获取cookie 增加30s内取消按钮，30s后不能进行其他交互直到2分钟或获取到cookie。
-    - getfile 获取jd目录下文件。
-    - log 选择查看执行日志。
-    - node 执行js脚本文件，直接输入/node jd_bean_change 如执行其他自己js，需输入绝对路径。即可进行执行。该命令会等待脚本执行完，期间不能使用机器人，建议使用snode命令。
-    - setshort 设置自定义按钮，每次设置会覆盖原设置。
-    - snode 命令可以选择脚本执行，只能选择/scripts 和/own目录下的脚本，选择完后直接后台运行，不影响机器人响应其他命令。 
-    - set 设置
-    - dl 下载
-    此外直接发送文件，会让您选择保存到哪个文件夹，如果选择运行，将保存至own目录下，并立即运行脚本'''
-***
-## [交流频道](https://t.me/tiangongtong)
-***
-## 青龙与V4均可使用
-***
-# 严禁任何人以任何形式放置在收费项目中
+#  [交流频道](https://t.me/tiangongtong)
+-------
+#  安装教程
+##  一、青龙
+1. 最新版本青龙直接执行`ql bot`命令即可完成下载安装
+2. 设置随容器启动。在config.sh内的`AutostartBot=""`改成`AutostartBot="true"`
+##  二、V4
+1. 下载项目config内的bot.sh，放在容器config文件夹内，执行`bash /jd/config/bot.sh`
+2. 注释掉定时任务内的jup或更改为jup scripts，否则会被自动更新覆盖
+3. 执行`cd /jd/jbot && pm2 start ecosystem.config.js
+`或`nohup python3 -m jbot >/dev/null 2>&1 &`来启动机器人
+## 三、其他
+1. 安装python3
+2. 如需扫码获取cookie，需增加C环境及图片支持，如`zlib-dev gcc jpeg-dev python3-dev musl-dev freetype-dev`
+3. 执行`pip3 install telethon python-socks[asyncio] pillow qrcode requests prettytable`
+4. 或者下载requirements.txt `pip3 install -r requirements.txt`
+5. 下载jbot文件夹/jd目录下，下载config/bot.json放在config下
+6. ` nohup python3 -m jbot >/dev/null 2>&1 &`
+-------
+#  配置教程
+- 安装好后需要对config目录下的**bot.json**文件进行配置
+- bot.json内容严格按照注释要求进行填写，大部分不能启动的原因都是json文件没写对，或格式有错误，或内容未按要求填写。建议填写完后找一个JSON检验网站，验证一下格式
+-------
+#  排错教程
+配置完成，启动完毕，机器人会向你发送最新的更新日志，如果未收到机器人消息，则可能出现了错误，可按如下方式处理
+1. 查看log/bot目录下的run.log，看是否有错误，如果该文件内有错误，一般是网络代理问题
+2. 如果上述文件不存在，容器内执行`python3 -m jbot`查看是否报错，如错误最后出现json.xxxxx.error则为bot.json未配置好。
+3. 如出现其他错误请百度或谷歌或加入
+[频道](https://t.me/tiangongtong)交流
+-------
+#  使用教程
+- `/start` 命令可查看当前机器人所支持的所有命令
+- `/help` 命令可直接发送给[botfather](https://t.me/BotFather)，用来设置快捷命令
+    - `/help` 加其他命令可查看具体使用方法
+- `/set` 用来设置一些机器人设置
+- `/setshort` 用来设置快捷键，也可通过修改config/shortcut.list进行修改
+    - 快捷设置好后，可通过`/a`命令进行触发
+    - `/b`命令可以触达shortcut.list内的
+-  `/getfile`命令用来获取容器内文件。可通过`/getfile`后边加参数直接获取文件，或选择该目录文件，例如:
+    - `/getfile /jd/config`则进入config目录选择文件
+    - `/getfile /jd/config/bot.json`则直接获取config目录下的bot.json文件
+- `/edit`选择文件进行编辑，命令用法同`/getfile`，也支持`/edit /jd/config/config.sh`这样直接编辑文件
+- `/getcookie`用于扫码获取ck 
+- `/snode`命令选择脚本进行执行
+- `/cmd`相当于在容器内执行终端命令
+## 本项目仅作为学习交流使用，严禁任何人与任何组织用于收费项目中
