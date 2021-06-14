@@ -54,5 +54,7 @@
 - `/getcookie`  扫码获取ck 
 - `/snode` 选择脚本进行执行
 - `/cmd` 在容器内执行终端命令
+- `/chart n`用于查看第n个账户的近7日收支曲线柱状图。 n为数字，代表你得第几个账户
+- `/bean n`用法同`/chart`以表格形式展示
 - `/node` 使用node执行js脚本，例如：`/node /jd/scripts/jd_fruit.js`
 ## 本项目仅作为学习交流使用，严禁任何人与任何组织用于收费项目中
