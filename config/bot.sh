@@ -86,7 +86,7 @@ fi
 echo -e "\nbot文件下载成功...\n"
 echo -e "3、安装python3依赖...\n"
 cd $dir_bot
-pip3 config set global.index-url https://pypi.mirrors.ustc.edu.cn/simple
+pip3 config set global.index-url https://mirrors.aliyun.com/pypi/simple/
 pip3 --default-timeout=100 install -r requirements.txt --no-cache-dir
 echo -e "\npython3依赖安装成功...\n"
 echo -e "4、启动bot程序...\n"
@@ -100,7 +100,10 @@ if [[ -z $(grep -E "123456789" $dir_root/config/bot.json) ]]; then
         nohup python3 -m jbot >$dir_root/log/bot/bot.log 2>&1 &
         echo -e "bot启动成功...\n"
     else
+        cd $dir_bot
+        pm2 start jbot
         pm2 restart jbot
+        echo -e "bot启动成功...\n"
     fi
 else
     echo -e  "似乎 $dir_root/config/bot.json 还未修改为你自己的信息，可能是首次部署容器，因此不启动Telegram Bot...\n配置好bot.json后再次运行本程序即可启动"
