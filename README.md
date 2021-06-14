@@ -29,7 +29,8 @@
 #  配置教程
 1. 首次安装，需要配置/jd/config目录下的**bot.json**文件
 2. 配置示例，如图
-![u7JIQUKf3dPaFbT](https://i.loli.net/2021/04/08/u7JIQUKf3dPaFbT.png)
+
+![OxKRUjYdXzmnk6V](https://i.loli.net/2021/06/14/OxKRUjYdXzmnk6V.png)
 
 ### 注意：
 - bot.json有严格的格式要求，需按照注释要求进行填写。
