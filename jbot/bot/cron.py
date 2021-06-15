@@ -2,13 +2,14 @@ from telethon import events, Button
 import json
 import os
 from asyncio import exceptions
-from .. import jdbot, chat_id, logger, _LogDir
-from ..bot.utils import QL, press_event, split_list, cronmanger, mybot, _Auth
+from .. import jdbot, chat_id, logger, _LogDir, chname, mybot
+from ..bot.utils import QL, press_event, split_list, cronmanger, _Auth
 
 
 @jdbot.on(events.NewMessage(from_users=chat_id, pattern=r'^/cron'))
-async def mycrons(event):
+async def my_cron(event):
     '''接收/cron后执行程序'''
+    msg_text = event.raw_text.split(' ')
     try:
         SENDER = event.sender_id
         msg = await jdbot.send_message(chat_id, '正在查询请稍后')
@@ -21,10 +22,13 @@ async def mycrons(event):
             auth = {'token': ''}
             buttons = [{'name': '运行', 'data': 'run'}, {'name': '编辑', 'data': 'edit'}, {
                 'name': '启用', 'data': 'enable'}, {'name': '禁用', 'data': 'disable'}, {'name': '删除', 'data': 'del'}, {'name': '取消', 'data': 'cancel'}]
-        if len(event.raw_text.split(' ')) > 1:
-            text = event.raw_text.replace('/cron ', '')
+        if len(msg_text) == 2:
+            text = msg_text[-1]
         else:
-            text = ''
+            text = None
+        if not text:
+            await jdbot.edit_message(msg, '请正确使用cron命令,后边需跟关键字。/cron abcd')
+            return
         res = cronmanger('search', text, auth['token'])
         if res['code'] == 200:
             async with jdbot.conversation(SENDER, timeout=30) as conv:
@@ -106,9 +110,13 @@ async def mycrons(event):
         msg = await jdbot.edit_message(msg, f'something wrong,I\'m sorry\n{str(e)}')
         logger.error(f'something wrong,I\'m sorry\n{str(e)}')
 
+if chname:
+    jdbot.add_event_handler(my_cron, events.NewMessage(
+        from_users=chat_id, pattern=mybot['命令别名']['cron']))
+
 
 @jdbot.on(events.NewMessage(from_users=chat_id, pattern=r'^/addcron'))
-async def myaddcron(event):
+async def my_addcron(event):
     try:
         SENDER = event.sender_id
         msg = await jdbot.send_message(chat_id, f'请稍后，正在查询')
@@ -122,7 +130,7 @@ async def myaddcron(event):
         markup = [Button.inline('是', data='yes'),
                   Button.inline('否', data='cancel')]
         async with jdbot.conversation(SENDER, timeout=30) as conv:
-            await jdbot.delete_messages(chat_id,msg)
+            await jdbot.delete_messages(chat_id, msg)
             msg = await conv.send_message('是否确认添加cron', buttons=markup)
             convdata = await conv.wait_event(press_event(SENDER))
             res = bytes.decode(convdata.data)
@@ -152,3 +160,6 @@ async def myaddcron(event):
     except Exception as e:
         msg = await jdbot.edit_message(msg, f'something wrong,I\'m sorry\n{str(e)}')
         logger.error(f'something wrong,I\'m sorry\n{str(e)}')
+if chname:
+    jdbot.add_event_handler(my_addcron, events.NewMessage(
+        from_users=chat_id, pattern=mybot['命令别名']['addcron']))

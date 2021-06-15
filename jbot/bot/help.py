@@ -3,10 +3,11 @@ from .. import jdbot, chat_id
 
 
 @jdbot.on(events.NewMessage(from_users=chat_id, pattern='^/help'))
-async def myhelp(event):
+async def my_help(event):
     '''接收/help命令后执行程序'''
-    if len(event.raw_text) > 6:
-        text = event.raw_text.replace('/help ', '')
+    msg_text = event.raw_text.split(' ')
+    if len(msg_text) == 2:
+        text = msg_text[-1]
     else:
         text = 'mhelp'
     mhelp = '''

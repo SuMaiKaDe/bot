@@ -1,6 +1,6 @@
 from PIL import Image, ImageFont, ImageDraw
 from telethon import events
-from .. import jdbot, chat_id, _LogDir, _JdbotDir, logger
+from .. import jdbot, chat_id, _LogDir, _JdbotDir, logger, mybot, chname
 from prettytable import PrettyTable
 import subprocess
 from .beandata import get_bean_data
@@ -14,11 +14,12 @@ _font = _JdbotDir + '/font/jet.ttf'
 
 
 @jdbot.on(events.NewMessage(chats=chat_id, pattern=r'^/bean'))
-async def mybean(event):
+async def my_bean(event):
+    msg_text = event.raw_text.split(' ')
     try:
         msg = await jdbot.send_message(chat_id, '正在查询，请稍后')
-        if len(event.raw_text.split(' ')) > 1:
-            text = event.raw_text.replace('/bean ', '')
+        if len(msg_text) == 2:
+            text = msg_text[-1]
         else:
             text = None
         if V4 and text == 'in':
@@ -56,6 +57,10 @@ async def mybean(event):
     except Exception as e:
         await jdbot.send_message(chat_id, f'something wrong,I\'m sorry\n{str(e)}')
         logger.error(f'something wrong,I\'m sorry{str(e)}')
+
+if chname:
+    jdbot.add_event_handler(my_bean, events.NewMessage(
+        chats=chat_id, pattern=mybot['命令别名']['bean']))
 
 
 def creat_bean_count(date, beansin, beansout, beanstotal):

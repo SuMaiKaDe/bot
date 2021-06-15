@@ -293,34 +293,42 @@ async def cronup(jdbot, conv, resp, filename, msg, SENDER, markup, path):
     try:
         if QL:
             #{name: "测试2", command: "ql bot", schedule: "0 0 * * *"}
-            crondata = {"name":f'{filename.split(".")[0]}',"command":f'task {path}/{filename}',"schedule":f'{mycron(resp)}'}
+            crondata = {
+                "name": f'{filename.split(".")[0]}', "command": f'task {path}/{filename}', "schedule": f'{mycron(resp)}'}
         else:
             crondata = f'{mycron(resp)} mtask {path}/{filename}'
         msg = await jdbot.edit_message(msg, f'已识别定时\n```{crondata}```\n是否需要修改', buttons=markup)
     except:
         if QL:
-            crondata = {"name":f'{filename.split(".")[0]}',"command":f'task {path}/{filename}',"schedule":f'0 0 * * *'}
+            crondata = {
+                "name": f'{filename.split(".")[0]}', "command": f'task {path}/{filename}', "schedule": f'0 0 * * *'}
         else:
             crondata = f'0 0 * * * mtask {path}/{filename}'
         msg = await jdbot.edit_message(msg, f'未识别到定时，默认定时\n```{crondata}```\n是否需要修改', buttons=markup)
     convdata3 = await conv.wait_event(press_event(SENDER))
     res3 = bytes.decode(convdata3.data)
     if res3 == 'yes':
-        convmsg = await conv.send_message(f'```{crondata}```\n请输入您要修改内容，可以直接点击上方定时进行复制修改')
+        convmsg = await conv.send_message(f'```{crondata}```\n请输入您要修改内容，可以直接点击上方定时进行复制修改\n如果需要取消，请输入`cancel`或`取消`')
         crondata = await conv.get_response()
         crondata = crondata.raw_text
-        await jdbot.delete_messages(chat_id, convmsg)
+        if crondata == 'cancel' or crondata == '取消':
+            conv.cancel()
+            await jdbot.delete_messages(chat_id, convmsg)
+            await jdbot.delete_messages(chat_id, msg)
+            await jdbot.send_message(chat_id,'对话已取消')
+            return
     if QL:
         with open(_Auth, 'r', encoding='utf-8') as f:
-                auth = json.load(f)
-        res = qlcron('add',json.loads(str(crondata).replace('\'','\"')),auth['token'])
+            auth = json.load(f)
+        res = qlcron('add', json.loads(
+            str(crondata).replace('\'', '\"')), auth['token'])
     else:
         res = upcron(crondata)
-    await jdbot.delete_messages(chat_id,msg)
+    await jdbot.delete_messages(chat_id, msg)
     if res['code'] == 200:
-        await jdbot.send_message(msg, f'{filename}已保存到{path}，并已尝试添加定时任务')
+        await jdbot.send_message(chat_id, f'{filename}已保存到{path}，并已尝试添加定时任务')
     else:
-        await jdbot.send_message(chat_id,f'{filename}已保存到{path},定时任务添加失败，{res["data"]}')
+        await jdbot.send_message(chat_id, f'{filename}已保存到{path},定时任务添加失败，{res["data"]}')
 
 
 def qlcron(fun, crondata, token):
@@ -343,11 +351,11 @@ def qlcron(fun, crondata, token):
                 'command': crondata['command'],
                 'schedule': crondata['schedule']
             }
-            res = requests.post(url, data=data,headers=headers).json()
+            res = requests.post(url, data=data, headers=headers).json()
         elif fun == 'run':
             data = [crondata['_id']]
             # crondata 格式：命令id
-            res = requests.put(f'{url}/run', json=data,headers=headers).json()
+            res = requests.put(f'{url}/run', json=data, headers=headers).json()
         elif fun == 'log':
             # crondata 格式：命令id
             data = crondata['_id']
@@ -364,11 +372,13 @@ def qlcron(fun, crondata, token):
         elif fun == 'disable':
             # crondata 格式：命令id
             data = [crondata['_id']]
-            res = requests.put(url+'/disable', json=data, headers=headers).json()
+            res = requests.put(url+'/disable', json=data,
+                               headers=headers).json()
         elif fun == 'enable':
             # crondata 格式：命令id
             data = [crondata['_id']]
-            res = requests.put(url+'/enable', json=data, headers=headers).json()
+            res = requests.put(url+'/enable', json=data,
+                               headers=headers).json()
         elif fun == 'del':
             # crondata 格式：命令id
             data = [crondata['_id']]
@@ -387,10 +397,11 @@ def V4cron(fun, crondata):
         v4crons = f.readlines()
     try:
         if fun == 'search':
-            res = {'code': 200,'data':{}}
+            res = {'code': 200, 'data': {}}
             for cron in v4crons:
                 if str(crondata) in cron:
-                    res['data'][cron.split('task ')[-1].split(' ')[0].split('/')[-1].replace('\n','')] = cron
+                    res['data'][cron.split(
+                        'task ')[-1].split(' ')[0].split('/')[-1].replace('\n', '')] = cron
         elif fun == 'add':
             v4crons.append(crondata)
             res = {'code': 200, 'data': 'sucess'}

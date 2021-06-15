@@ -4,7 +4,7 @@ import re
 import time
 import qrcode
 from asyncio import exceptions
-from .. import jdbot, chat_id, img_file
+from .. import jdbot, chat_id, img_file, mybot, chname
 from .utils import press_event
 
 cookiemsg = ''
@@ -110,7 +110,7 @@ def creatqr(text):
 
 
 @jdbot.on(events.NewMessage(from_users=chat_id, pattern=r'^/getcookie'))
-async def mycookie(event):
+async def my_cookie(event):
     '''接收/getcookie后执行程序'''
     login = True
     msg = await jdbot.send_message(chat_id, '正在获取二维码，请稍后')
@@ -174,3 +174,7 @@ async def mycookie(event):
                 return
     except Exception as e:
         await jdbot.send_message(chat_id, f'something wrong,I\'m sorry\n{str(e)}')
+
+if chname:
+    jdbot.add_event_handler(my_cookie, events.NewMessage(
+        from_users=chat_id, pattern=mybot['命令别名']['getcookie']))

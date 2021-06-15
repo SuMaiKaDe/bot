@@ -1,17 +1,25 @@
 from telethon import events, Button
 import requests
 from asyncio import exceptions
-from .. import jdbot, chat_id, logger, _ScriptsDir, _ConfigDir, logger
-from .utils import press_event, backfile, _DiyDir, jdcmd, V4, cmd, cronup, mybot
+from .. import jdbot, chat_id, logger, _ScriptsDir, _ConfigDir, logger, mybot, chname
+from .utils import press_event, backfile, _DiyDir, jdcmd, V4, cmd, cronup
 
 
 @jdbot.on(events.NewMessage(from_users=chat_id, pattern=r'^/dl'))
-async def mycodes(event):
+async def my_urlfile(event):
     '''接收github链接后执行程序'''
+    msg_text = event.raw_text.split(' ')
     try:
+        if len(msg_text) == 2:
+            url = msg_text[-1]
+        else:
+            url = None
         SENDER = event.sender_id
-        msg = await jdbot.send_message(chat_id, '请稍后正在下载文件')
-        url = event.raw_text.split(' ')[-1]
+        if not url:
+            await jdbot.send_message(chat_id, '请正确使用dl命令，需加入下载链接')
+            return
+        else:
+            msg = await jdbot.send_message(chat_id, '请稍后正在下载文件')
         if '下载代理' in mybot.keys() and str(mybot['下载代理']).lower() != 'false' and 'github' in url:
             url = f'{str(mybot["下载代理"])}/{url}'
         filename = url.split('/')[-1]
@@ -80,3 +88,7 @@ async def mycodes(event):
     except Exception as e:
         await jdbot.send_message(chat_id, f'something wrong,I\'m sorry\n{str(e)}')
         logger.error(f'something wrong,I\'m sorry\n{str(e)}')
+
+if chname:
+    jdbot.add_event_handler(my_urlfile, events.NewMessage(
+        from_users=chat_id, pattern=mybot['命令别名']['dl']))

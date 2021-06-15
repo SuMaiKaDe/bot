@@ -46,8 +46,11 @@ async def mysetting():
                 myset = json.load(f)
             if myset['版本'] != botset['版本']:
                 for i in myset:
-                    if '版本' not in i:
+                    if '版本' not in i and not isinstance(myset[i],dict):
                         botset[i] = myset[i]
+                    elif isinstance(myset[i],dict):
+                        for j in myset[i]:
+                            botset[i][j] = myset[i][j]
                     else:
                         continue
                 with open(_botset, 'w+', encoding='utf-8') as f:
@@ -63,6 +66,7 @@ async def hello():
     if '启动问候' in mybot.keys() and mybot['启动问候'].lower() == 'true':
         info = '[项目地址](https://github.com/SuMaiKaDe/) \t| \t[交流频道](https://t.me/tiangongtong) '
         await jdbot.send_message(chat_id, f'{str(mybot["启动问候语"])}\n\n\t{info}', link_preview=False)
+
 
 if __name__ == "__main__":
     with jdbot:

@@ -16,7 +16,7 @@
     "proxy_add": "192.168.99.100",
     "//proxy_port": "↓↓↓  代理端口，不需要双引号例如 5890  ↓↓↓",
     "proxy_port": 5890,
-    "//proxy_secret": "↓↓↓  MTProxy代理秘钥  ↓↓↓",
+    "//proxy_secret": "↓↓↓  如果使用MTProxy，填入MTProxy代理秘钥  ↓↓↓",
     "proxy_secret": "",
     "//proxy_user": "↓↓↓  代理的username,有就改，没有就不要动  ↓↓↓",
     "proxy_user": "代理的username,有则填写，无则不用动",

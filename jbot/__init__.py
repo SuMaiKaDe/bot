@@ -1,4 +1,4 @@
-from telethon import TelegramClient
+from telethon import TelegramClient, connection
 import json
 import os
 import logging
@@ -32,6 +32,10 @@ if os.path.exists(_botset):
 else:
     with open(_set, 'r', encoding='utf-8') as f:
         mybot = json.load(f)
+if '开启别名' in mybot.keys() and mybot['开启别名'].lower() == 'true':
+    chname = True
+else:
+    chname = False
 chat_id = int(bot['user_id'])
 # 机器人 TOKEN
 TOKEN = bot['bot_token']
@@ -42,6 +46,8 @@ api_id = bot['api_id']
 api_hash = bot['api_hash']
 proxystart = bot['proxy']
 StartCMD = bot['StartCMD']
+proxyType = bot['proxy_type']
+connectionType = connection.ConnectionTcpMTProxyRandomizedIntermediate if proxyType == "MTProxy" else connection.ConnectionTcpFull
 if 'proxy_user' in bot.keys() and bot['proxy_user'] != "代理的username,有则填写，无则不用动":
     proxy = {
         'proxy_type': bot['proxy_type'],
@@ -49,14 +55,16 @@ if 'proxy_user' in bot.keys() and bot['proxy_user'] != "代理的username,有则
         'port': bot['proxy_port'],
         'username': bot['proxy_user'],
         'password': bot['proxy_password']}
+elif proxyType == "MTProxy":
+    proxy = (bot['proxy_add'], bot['proxy_port'], bot['proxy_secret'])
 else:
     proxy = (bot['proxy_type'], bot['proxy_add'], bot['proxy_port'])
 # 开启tg对话
 if proxystart and 'noretry' in bot.keys() and bot['noretry']:
-    jdbot = TelegramClient('bot', api_id, api_hash,
+    jdbot = TelegramClient('bot', api_id, api_hash, connection=connectionType,
                            proxy=proxy).start(bot_token=TOKEN)
 elif proxystart:
-    jdbot = TelegramClient('bot', api_id, api_hash,
+    jdbot = TelegramClient('bot', api_id, api_hash, connection=connectionType,
                            proxy=proxy, connection_retries=None).start(bot_token=TOKEN)
 elif 'noretry' in bot.keys() and bot['noretry']:
     jdbot = TelegramClient('bot', api_id, api_hash).start(bot_token=TOKEN)

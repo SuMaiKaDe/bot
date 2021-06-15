@@ -5,7 +5,7 @@ from .utils import press_event, backfile, _DiyDir, jdcmd, V4, cronup, cmd
 
 
 @jdbot.on(events.NewMessage(from_users=chat_id))
-async def myfile(event):
+async def my_file(event):
     '''定义文件操作'''
     try:
         v4btn = [[Button.inline('放入config', data=_ConfigDir), Button.inline('放入scripts', data=_ScriptsDir), Button.inline('放入OWN文件夹', data=_DiyDir)], [
