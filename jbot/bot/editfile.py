@@ -13,7 +13,7 @@ async def my_edit(event):
     SENDER = event.sender_id
     path = _JdDir
     page = 0
-    if isinstance(msg_text,dict) and len(msg_text) == 2:
+    if isinstance(msg_text,list) and len(msg_text) == 2:
         text = msg_text[-1]
     else:
         text = None

@@ -8,7 +8,7 @@ async def my_cmd(event):
     '''接收/cmd命令后执行程序'''
     msg_text = event.raw_text.split(' ')
     try:
-        if isinstance(msg_text,dict):
+        if isinstance(msg_text,list):
             text = ''.join(msg_text[1:])
         else:
             text = None

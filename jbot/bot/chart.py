@@ -10,7 +10,7 @@ async def my_chart(event):
     msg_text = event.raw_text.split(' ')
     try:
         msg = await jdbot.send_message(chat_id, '正在查询，请稍后')
-        if isinstance(msg_text,dict) and len(msg_text) == 2:
+        if isinstance(msg_text,list) and len(msg_text) == 2:
             text = msg_text[-1]
         else:
             text = None

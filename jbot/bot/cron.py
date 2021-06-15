@@ -22,7 +22,7 @@ async def my_cron(event):
             auth = {'token': ''}
             buttons = [{'name': '运行', 'data': 'run'}, {'name': '编辑', 'data': 'edit'}, {
                 'name': '启用', 'data': 'enable'}, {'name': '禁用', 'data': 'disable'}, {'name': '删除', 'data': 'del'}, {'name': '取消', 'data': 'cancel'}]
-        if isinstance(msg_text,dict) and len(msg_text) == 2:
+        if isinstance(msg_text,list) and len(msg_text) == 2:
             text = msg_text[-1]
         else:
             text = None

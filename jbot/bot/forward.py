@@ -21,7 +21,7 @@ async def my_forward(event):
 async def my_reply(event):
     try:
         msg_text  = event.raw_text.split(' ')
-        if isinstance(msg_text,dict) and len(msg_text) == 3:
+        if isinstance(msg_text,list) and len(msg_text) == 3:
             text = msg_text[1:]
         else:
             text = None
