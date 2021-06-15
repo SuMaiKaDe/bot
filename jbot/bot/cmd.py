@@ -23,7 +23,7 @@ async def my_cmd(event):
             /cmd jcsv    # 记录豆豆变化情况
             不建议直接使用cmd命令执行脚本，请使用/node或/snode
             '''
-            await jdbot.edit_message(chat_id, msg)
+            await jdbot.send_message(chat_id, msg)
         else:
             await jdbot.send_message(chat_id, '未开启CMD命令，如需使用请修改配置文件')
     except Exception as e:
