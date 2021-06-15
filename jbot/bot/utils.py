@@ -272,7 +272,7 @@ async def nodebtn(conv, SENDER, path, msg, page, filelist):
 
 
 def mycron(lines):
-    cronreg = re.compile(r'([0-9\-\*/,]{1,} ){4}([0-9\-\*/,]){1,}')
+    cronreg = re.compile(r'([0-9\-\*/,]{1,} ){4,5}([0-9\-\*/,]){1,}')
     return cronreg.search(lines).group()
 
 
@@ -294,14 +294,12 @@ async def cronup(jdbot, conv, resp, filename, msg, SENDER, markup, path):
         if QL:
             #{name: "测试2", command: "ql bot", schedule: "0 0 * * *"}
             crondata = {"name":f'{filename.split(".")[0]}',"command":f'task {path}/{filename}',"schedule":f'{mycron(resp)}'}
-            # crondata = '"name": {name},"command":{command},"schedule":{schedule}'.format(**qlcron)
         else:
             crondata = f'{mycron(resp)} mtask {path}/{filename}'
         msg = await jdbot.edit_message(msg, f'已识别定时\n```{crondata}```\n是否需要修改', buttons=markup)
     except:
         if QL:
             crondata = {"name":f'{filename.split(".")[0]}',"command":f'task {path}/{filename}',"schedule":f'0 0 * * *'}
-            # crondata = '"name": {name},"command":{command},"schedule":{schedule}'.format(**qlcron)
         else:
             crondata = f'0 0 * * * mtask {path}/{filename}'
         msg = await jdbot.edit_message(msg, f'未识别到定时，默认定时\n```{crondata}```\n是否需要修改', buttons=markup)
@@ -311,16 +309,18 @@ async def cronup(jdbot, conv, resp, filename, msg, SENDER, markup, path):
         convmsg = await conv.send_message(f'```{crondata}```\n请输入您要修改内容，可以直接点击上方定时进行复制修改')
         crondata = await conv.get_response()
         crondata = crondata.raw_text
-        if QL:
-            crondata = json.loads(crondata)
         await jdbot.delete_messages(chat_id, convmsg)
     if QL:
         with open(_Auth, 'r', encoding='utf-8') as f:
                 auth = json.load(f)
-        qlcron('add',crondata,auth['token'])
+        res = qlcron('add',json.loads(str(crondata).replace('\'','\"')),auth['token'])
     else:
-        upcron(crondata)
-    await jdbot.edit_message(msg, f'{filename}已保存到{path}，并已尝试添加定时任务')
+        res = upcron(crondata)
+    await jdbot.delete_messages(chat_id,msg)
+    if res['code'] == 200:
+        await jdbot.send_message(msg, f'{filename}已保存到{path}，并已尝试添加定时任务')
+    else:
+        await jdbot.send_message(chat_id,f'{filename}已保存到{path},定时任务添加失败，{res["data"]}')
 
 
 def qlcron(fun, crondata, token):

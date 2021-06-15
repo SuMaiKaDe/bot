@@ -4,7 +4,7 @@
 # author：   https://github.com/SuMaiKaDe
 
 import json
-from . import jdbot, chat_id, logger, _JdbotDir, _LogDir, _botset, _set
+from . import jdbot, chat_id, logger, _JdbotDir, _LogDir, _botset, _set, mybot
 from .utils import load_diy
 import os
 from .bot.update import version, botlog
@@ -17,7 +17,7 @@ logger.info('loading diy module...')
 load_diy('diy', diypath)
 
 
-async def hello():
+async def new():
     info = '[项目地址](https://github.com/SuMaiKaDe/) \t| \t[交流频道](https://t.me/tiangongtong) '
     if os.path.exists(_botuplog):
         isnew = False
@@ -58,8 +58,15 @@ async def mysetting():
     except Exception as e:
         logger.info(str(e))
 
+
+async def hello():
+    if '启动问候' in mybot.keys() and mybot['启动问候'].lower() == 'true':
+        info = '[项目地址](https://github.com/SuMaiKaDe/) \t| \t[交流频道](https://t.me/tiangongtong) '
+        await jdbot.send_message(chat_id, f'{str(mybot["启动问候语"])}\n\n\t{info}', link_preview=False)
+
 if __name__ == "__main__":
     with jdbot:
-        jdbot.loop.create_task(hello())
+        jdbot.loop.create_task(new())
         jdbot.loop.create_task(mysetting())
+        jdbot.loop.create_task(hello())
         jdbot.loop.run_forever()

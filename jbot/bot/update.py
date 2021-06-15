@@ -1,9 +1,9 @@
-version = 'version :0.9.9.1'
+version = 'version :0.9.9.2'
 botlog = '''
-**2021年6月13日**
+**2021年6月15日**
 本次更新内容如下:
-    - /up 自动更新，并重启程序
-        - 首次使用需下载项目内config/bot.sh,并放置在容器config目录下
-    - /set 新增代理设置，主要针对下载github，默认为"https://ghproxy.com"
-        - 可自行修改，如不需要请修改为False
+    - /addcron 通过/addcron命令可新增定时任务
+    - 修复6位cron不能正确识别的问题
+    - /set 新增启动问候，改为True即可在机器人每次启动后向你问好
+    - /set 新增启动问候语，可修改为自定义问候语
 '''

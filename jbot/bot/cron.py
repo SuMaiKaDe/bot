@@ -105,3 +105,50 @@ async def mycrons(event):
     except Exception as e:
         msg = await jdbot.edit_message(msg, f'something wrong,I\'m sorry\n{str(e)}')
         logger.error(f'something wrong,I\'m sorry\n{str(e)}')
+
+
+@jdbot.on(events.NewMessage(from_users=chat_id, pattern=r'^/addcron'))
+async def myaddcron(event):
+    try:
+        SENDER = event.sender_id
+        msg = await jdbot.send_message(chat_id, f'请稍后，正在查询')
+        if QL:
+            with open(_Auth, 'r', encoding='utf-8') as f:
+                auth = json.load(f)
+            info = '任务名称-->任务命令-->定时\n```测试2-->ql repo xxxxxx.git "jd"-->0 6 * * *```'
+        else:
+            info = '```0 0 * * * jtask /jd/own/abcd.js```'
+            auth = {'token': ''}
+        markup = [Button.inline('是', data='yes'),
+                  Button.inline('否', data='cancel')]
+        async with jdbot.conversation(SENDER, timeout=30) as conv:
+            await jdbot.delete_messages(chat_id,msg)
+            msg = await conv.send_message('是否确认添加cron', buttons=markup)
+            convdata = await conv.wait_event(press_event(SENDER))
+            res = bytes.decode(convdata.data)
+            if res == 'cancel':
+                msg = await jdbot.edit_message(msg, '对话已取消')
+                conv.cancel()
+            else:
+                await jdbot.delete_messages(chat_id, msg)
+                msg = await conv.send_message(f'点击复制下方信息进行修改,并发送给我\n{info}')
+                resp = await conv.get_response()
+                if QL:
+                    crondata = {}
+                    crondata['name'], crondata['command'], crondata['schedule'] = resp.raw_text.split(
+                        '-->')
+                    res = cronmanger('add', crondata, auth['token'])
+                else:
+                    crondata = resp.raw_text
+                    res = cronmanger('add', crondata, auth['token'])
+                if res['code'] == 200:
+                    await jdbot.delete_messages(chat_id, msg)
+                    msg = await jdbot.send_message(chat_id, '已成功添加定时任务')
+                else:
+                    await jdbot.delete_messages(chat_id, msg)
+                    msg = await jdbot.send_message(chat_id, f'添加定时任务时发生了一些错误\n{res["data"]}')
+    except exceptions.TimeoutError:
+        msg = await jdbot.edit_message(msg, '选择已超时，对话已停止')
+    except Exception as e:
+        msg = await jdbot.edit_message(msg, f'something wrong,I\'m sorry\n{str(e)}')
+        logger.error(f'something wrong,I\'m sorry\n{str(e)}')
