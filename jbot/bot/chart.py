@@ -21,7 +21,8 @@ async def my_chart(event):
             else:
                 creat_chart(date, f'账号{str(text)}',
                             beanin, beanout, beanstotal[1:])
-                msg = await jdbot.edit_message(msg, f'您的账号{text}收支情况', file=_botimg)
+                await jdbot.delete_messages(chat_id,msg)
+                msg = await jdbot.send_message(chat_id, f'您的账号{text}收支情况', file=_botimg)
         else:
             msg = await jdbot.edit_message(msg, '请正确使用命令\n/chart n n为第n个账号')
     except Exception as e:

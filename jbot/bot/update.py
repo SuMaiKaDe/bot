@@ -1,3 +1,7 @@
+from telethon import events
+from .. import jdbot, chat_id,chname
+
+
 version = 'version :0.9.9.5'
 botlog = '''
 **2021年6月15日下午**
@@ -10,3 +14,6 @@ botlog = '''
 
 **本次更新内容涉及了所有模块，如果产生了新BUG请及时反馈**
 '''
+@jdbot.on(events.NewMessage(from_users=chat_id,pattern=r'版本|^/ver'))
+async def my_ver():
+    await jdbot.send_message(chat_id,f'当前版本\n：{version}\n{botlog}')
