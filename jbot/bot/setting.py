@@ -19,7 +19,7 @@ async def my_set(event):
             else:
                 info = info + f'\t\t- {i}-->{myset[i]} \n'
         info = info + '请点击您要设置的项目，选择后，输入要设置的值，重启生效,垃圾话以 | 进行区隔,黑名单以空格或逗号或顿号区隔'
-        btn = [Button.inline(i, i) for i in myset]
+        btn = [Button.inline(i, i) for i in myset if not isinstance(myset[i],dict)]
         btn.append(Button.inline('取消', data='cancel'))
         btn = split_list(btn, 3)
         async with jdbot.conversation(SENDER, timeout=60) as conv:

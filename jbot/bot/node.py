@@ -7,7 +7,7 @@ from .utils import cmd, jdcmd
 async def my_node(event):
     '''接收/node命令后执行程序'''
     msg_text = event.raw_text.split(' ')
-    if len(msg_text) > 1:
+    if isinstance(msg_text,dict) and len(msg_text) == 2:
         text = ''.join(msg_text[1:])
     else:
         text = None

@@ -20,15 +20,15 @@ async def my_forward(event):
 @jdbot.on(events.NewMessage(chats=chat_id, pattern=r'^/reply'))
 async def my_reply(event):
     try:
-        if len(event.raw_text.split(' ')) > 1:
-            text = event.raw_text.replace('/reply ', '')
+        msg_text  = event.raw_text.split(' ')
+        if isinstance(msg_text,dict) and len(msg_text) == 3:
+            text = msg_text[1:]
         else:
             text = None
         if not text:
             info = '使用方法：/reply 123455676 你想说的话'
             await jdbot.send_message(chat_id, info)
         else:
-            text = text.split(' ')
             await jdbot.send_message(int(text[0]), text[1])
     except Exception as e:
         await jdbot.send_message(chat_id, str(e))

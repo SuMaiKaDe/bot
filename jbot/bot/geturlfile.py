@@ -10,7 +10,7 @@ async def my_urlfile(event):
     '''接收github链接后执行程序'''
     msg_text = event.raw_text.split(' ')
     try:
-        if len(msg_text) == 2:
+        if isinstance(msg_text,dict) and len(msg_text) == 2:
             url = msg_text[-1]
         else:
             url = None
