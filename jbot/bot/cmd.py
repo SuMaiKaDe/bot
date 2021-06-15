@@ -9,7 +9,7 @@ async def my_cmd(event):
     msg_text = event.raw_text.split(' ')
     try:
         if isinstance(msg_text,list):
-            text = ''.join(msg_text[1:])
+            text = ' '.join(msg_text[1:])
         else:
             text = None
         if StartCMD and text:
