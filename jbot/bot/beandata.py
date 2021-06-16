@@ -65,7 +65,7 @@ def getbeans(ck):
         while _7day:
             page = page + 1
             resp = session.get(url, params=getparms(page),
-                               headers=headers).text
+                               headers=headers,timeout=100).text
             res = json.loads(resp)
             if res['resultCode'] == 0:
                 for i in res['data']['list']:
@@ -98,7 +98,7 @@ def getTotal(ck):
         "Cookie": ck,
     }
     jurl = "https://wxapp.m.jd.com/kwxhome/myJd/home.json"
-    resp = session.get(jurl, headers=headers).text
+    resp = session.get(jurl, headers=headers,timeout=100).text
     res = json.loads(resp)
     return res['user']['jingBean']
 
