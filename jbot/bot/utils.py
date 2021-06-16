@@ -313,22 +313,23 @@ async def cronup(jdbot, conv, resp, filename, msg, SENDER, markup, path):
         crondata = crondata.raw_text
         if crondata == 'cancel' or crondata == '取消':
             conv.cancel()
-            await jdbot.delete_messages(chat_id, convmsg)
-            await jdbot.delete_messages(chat_id, msg)
             await jdbot.send_message(chat_id,'对话已取消')
             return
+        await jdbot.delete_messages(chat_id, convmsg)
+    await jdbot.delete_messages(chat_id, msg)
     if QL:
         with open(_Auth, 'r', encoding='utf-8') as f:
             auth = json.load(f)
         res = qlcron('add', json.loads(
             str(crondata).replace('\'', '\"')), auth['token'])
+        if res['code'] == 200:
+            await jdbot.send_message(chat_id, f'{filename}已保存到{path}，并已尝试添加定时任务')
+        else:
+            await jdbot.send_message(chat_id, f'{filename}已保存到{path},定时任务添加失败，{res["data"]}')
     else:
-        res = upcron(crondata)
-    await jdbot.delete_messages(chat_id, msg)
-    if res['code'] == 200:
+        upcron(crondata)
         await jdbot.send_message(chat_id, f'{filename}已保存到{path}，并已尝试添加定时任务')
-    else:
-        await jdbot.send_message(chat_id, f'{filename}已保存到{path},定时任务添加失败，{res["data"]}')
+
 
 
 def qlcron(fun, crondata, token):
