@@ -40,12 +40,15 @@ async def my_cron(event):
                     markup = [Button.inline(i, data=res['data'][i])
                               for i in res['data']]
                 markup = split_list(markup, int(mybot['每页列数']))
+                markup.append([Button.inline('取消',data='cancel')])
                 msg = await jdbot.send_message(
                     chat_id, '查询结果如下，点击按钮查看详细信息', buttons=markup)
                 convdata = await conv.wait_event(press_event(SENDER))
                 resp = bytes.decode(convdata.data)
-                logger.info(res['data'])
-                logger.info(resp)
+                if resp == 'cancel':
+                    await jdbot.edit_message(msg,'对话已取消')
+                    conv.cancel()
+                    return
                 if QL:
                     croninfo = '名称：\n\t{name}\n任务：\n\t{command}\n定时：\n\t{schedule}\n是否已禁用：\n\t{isDisabled}\n\t0--表示启用，1--表示禁用'.format(
                         **res['data'][int(resp)])
