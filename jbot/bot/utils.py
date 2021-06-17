@@ -144,8 +144,15 @@ async def logbtn(conv, SENDER, path, msg, page, filelist):
         else:
             dir = os.listdir(path)
             dir.sort()
-            markup = [Button.inline(file, data=str(file))
-                      for file in dir]
+            if path == _LogDir:
+                markup = [Button.inline("_".join(file.split("_")[-2:]), data=str(file))
+                          for file in dir]
+            elif os.path.dirname(os.path.realpath(path)) ==  _LogDir:
+                markup = [Button.inline("-".join(file.split("-")[-5:]), data=str(file))
+                          for file in dir]
+            else:
+                markup = [Button.inline(file, data=str(file))
+                          for file in dir]
             markup = split_list(markup, row)
             if len(markup) > 30:
                 markup = split_list(markup, 30)
@@ -313,7 +320,7 @@ async def cronup(jdbot, conv, resp, filename, msg, SENDER, markup, path):
         crondata = crondata.raw_text
         if crondata == 'cancel' or crondata == '取消':
             conv.cancel()
-            await jdbot.send_message(chat_id,'对话已取消')
+            await jdbot.send_message(chat_id, '对话已取消')
             return
         await jdbot.delete_messages(chat_id, convmsg)
     await jdbot.delete_messages(chat_id, msg)
@@ -329,7 +336,6 @@ async def cronup(jdbot, conv, resp, filename, msg, SENDER, markup, path):
     else:
         upcron(crondata)
         await jdbot.send_message(chat_id, f'{filename}已保存到{path}，并已尝试添加定时任务')
-
 
 
 def qlcron(fun, crondata, token):
