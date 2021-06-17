@@ -113,7 +113,7 @@ async def myedit(conv, SENDER, path, msg, page, filelist):
         elif res == 'edit':
             await jdbot.send_message(chat_id, '请复制并修改以下内容，修改完成后发回机器人，2分钟内有效\n发送`cancel`或`取消`取消对话')
             await jdbot.delete_messages(chat_id, msg)
-            msg = await conv.send_message("".join(newmarkup))
+            msg = await conv.send_message(f'`{"".join(newmarkup)}`')
             resp = await conv.get_response()
             if resp.raw_text == 'cancel' or resp.raw_text == '取消':
                 await jdbot.delete_messages(chat_id,msg)
