@@ -407,7 +407,8 @@ def V4cron(fun, crondata):
             v4crons.append(crondata)
             res = {'code': 200, 'data': 'sucess'}
         elif fun == 'run':
-            cmd(crondata)
+            cmd(f'jtask {crondata.split("task")[-1]}')
+            res = {'code': 200, 'data': 'sucess'}
         elif fun == 'edit':
             ocron, ncron = crondata.split('-->')
             i = v4crons.index(ocron)
