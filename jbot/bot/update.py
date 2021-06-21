@@ -16,7 +16,7 @@ botlog = '''
 '''
 
 
-# @jdbot.on(events.NewMessage(from_users=chat_id, pattern=r'^版本'))
-@jdbot.on(events.NewMessage(from_users=chat_id, pattern=r'^/ver'))
+# @jdbot.on(events.NewMessage(from_users=chat_id, pattern=r'^版本$'))
+@jdbot.on(events.NewMessage(from_users=chat_id, pattern=r'^/ver$'))
 async def my_ver(event):
     await jdbot.send_message(chat_id, f'当前版本\n{version}\n{botlog}')
