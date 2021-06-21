@@ -43,7 +43,7 @@ def myck(ckfile):
             auth = json.load(f)
         lines = str(qlenv('search','JD_COOKIE',auth['token']))
     elif QL:
-        with open(cookiefile, 'r', encoding='utf-8') as f:
+        with open(f'{_ConfigDir}/cookie.sh', 'r', encoding='utf-8') as f:
             lines = f.read()
     else:
         with open(ckfile, 'r', encoding='utf-8') as f:
