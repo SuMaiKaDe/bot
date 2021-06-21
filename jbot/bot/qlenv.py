@@ -26,7 +26,7 @@ async def my_env(event):
         else:
             text = None
         if not text:
-            await jdbot.edit_message(msg, '请正确使用cron命令,后边需跟关键字。/cron abcd')
+            await jdbot.edit_message(msg, '请正确使用env命令,后边需跟关键字\n/env abcd')
             return
         res = qlenv('search', text, auth['token'])
         if res['code'] == 200:
