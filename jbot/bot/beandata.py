@@ -10,7 +10,6 @@ SHA_TZ = timezone(
     name='Asia/Shanghai',
 )
 
-cookies = myck(_ConfigFile)
 session = requests.session()
 
 
@@ -104,6 +103,7 @@ def getTotal(ck):
 
 
 def get_bean_data(i):
+    cookies = myck(_ConfigFile)
     ck = cookies[i-1]
     beansin, beansout, _7days = getbeans(ck)
     beantotal = getTotal(ck)

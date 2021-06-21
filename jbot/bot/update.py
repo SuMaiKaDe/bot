@@ -13,11 +13,10 @@ botlog = '''
         - 使用方法 /addenv 触发，按照格式复制修改发送。
         - 以“-->”进行名称、值、备注区隔
 
-
 '''
 
 
 @jdbot.on(events.NewMessage(from_users=chat_id, pattern=r'版本'))
 @jdbot.on(events.NewMessage(from_users=chat_id, pattern=r'/ver'))
-async def my_ver():
+async def my_ver(event):
     await jdbot.send_message(chat_id, f'当前版本\n：{version}\n{botlog}')
