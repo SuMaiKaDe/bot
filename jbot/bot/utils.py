@@ -22,7 +22,7 @@ if 'JD_DIR' in os.environ.keys():
 elif 'QL_DIR' in os.environ.keys():
     QL = True
     _Auth = f'{_ConfigDir}/auth.json'
-    _ConfigFile = f'{_ConfigDir}/cookie.sh'
+    _ConfigFile = _Auth
     _DiyDir = None
     jdcmd = 'task'
     dirs = os.listdir(_LogDir)
@@ -37,8 +37,17 @@ else:
 
 def myck(ckfile):
     ckreg = re.compile(r'pt_key=\S*;pt_pin=\S*;')
-    with open(ckfile, 'r', encoding='utf-8') as f:
-        lines = f.read()
+    cookiefile = r'/ql/db/cookie.db'
+    if QL and not os.path.exists(cookiefile):
+        with open(ckfile,'r',encoding='utf-8') as f:
+            auth = json.load(f)
+        lines = str(qlenv('search','JD_COOKIE',auth['token']))
+    elif QL:
+        with open(cookiefile, 'r', encoding='utf-8') as f:
+            lines = f.read()
+    else:
+        with open(ckfile, 'r', encoding='utf-8') as f:
+            lines = f.read()
     cookies = ckreg.findall(lines)
     for ck in cookies:
         if ck == 'pt_key=xxxxxxxxxx;pt_pin=xxxx;':
@@ -147,7 +156,7 @@ async def logbtn(conv, SENDER, path, msg, page, filelist):
             if path == _LogDir:
                 markup = [Button.inline("_".join(file.split("_")[-2:]), data=str(file))
                           for file in dir]
-            elif os.path.dirname(os.path.realpath(path)) ==  _LogDir:
+            elif os.path.dirname(os.path.realpath(path)) == _LogDir:
                 markup = [Button.inline("-".join(file.split("-")[-5:]), data=str(file))
                           for file in dir]
             else:
@@ -456,3 +465,50 @@ def cronmanger(fun, crondata, token):
     else:
         res = V4cron(fun, crondata)
     return res
+
+
+def qlenv(fun, envdata, token):
+    url = 'http://127.0.0.1:5600/api/envs'
+    headers = {
+        'Authorization': f'Bearer {token}'
+    }
+    logger.info(f'{fun}-->{envdata}-->{token}')
+    try:
+        if fun == 'search':
+            params = {
+                't': int(round(time.time() * 1000)),
+                'searchValue': envdata
+            }
+            res = requests.get(url, params=params, headers=headers).json()
+        elif fun == 'add':
+            data = {
+                'name': envdata['name'],
+                'value': envdata['value'],
+                'remarks': envdata['remarks'] if 'remarks' in envdata.keys() else ''
+            }
+            res = requests.post(url, data=data, headers=headers).json()
+        elif fun == 'edit':
+            data = {
+                'name': envdata['name'],
+                'value': envdata['value'],
+                '_id': envdata['_id'],
+                'remarks': envdata['remarks'] if 'remarks' in envdata.keys() else ''
+            }
+            res = requests.put(url, json=data, headers=headers).json()
+        elif fun == 'disable':
+            data = [envdata['_id']]
+            res = requests.put(url+'/disable', json=data,
+                               headers=headers).json()
+        elif fun == 'enable':
+            data = [envdata['_id']]
+            res = requests.put(url+'/enable', json=data,
+                               headers=headers).json()
+        elif fun == 'del':
+            data = [envdata['_id']]
+            res = requests.delete(url, json=data, headers=headers).json()
+        else:
+            res = {'code': 400, 'data': '未知功能'}
+    except Exception as e:
+        res = {'code': 400, 'data': str(e)}
+    finally:
+        return res

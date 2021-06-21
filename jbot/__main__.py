@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
 # _*_ coding:utf-8 _*_
-# 0.3 版本开始不再区分ql、V3、V4。运行日志：log/bot/run.log
-# author：   https://github.com/SuMaiKaDe
 
 import json
 from . import jdbot, chat_id, logger, _JdbotDir, _LogDir, _botset, _set, mybot
 from .utils import load_diy
 import os
+import random
 from .bot.update import version, botlog
 _botuplog = f'{_LogDir}/bot/up.log'
 botpath = f'{_JdbotDir}/bot/'
@@ -65,7 +64,9 @@ async def mysetting():
 async def hello():
     if '启动问候' in mybot.keys() and mybot['启动问候'].lower() == 'true':
         info = '[项目地址](https://github.com/SuMaiKaDe/) \t| \t[交流频道](https://t.me/tiangongtong) '
-        await jdbot.send_message(chat_id, f'{str(mybot["启动问候语"])}\n\n\t{info}', link_preview=False)
+        words = mybot["启动问候语"].split("|")
+        word = words[random.randint(0, len(words) - 1)]
+        await jdbot.send_message(chat_id, f'{str(word)}\n\n\t{info}', link_preview=False)
 
 
 if __name__ == "__main__":
