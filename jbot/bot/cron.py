@@ -93,7 +93,7 @@ async def my_cron(event):
                         btnres, crondata, auth['token'])
                 if cronres['code'] == 200:
                     if 'data' not in cronres.keys():
-                        cronres['data'] = 'sucess'
+                        cronres['data'] = 'success'
                     await jdbot.delete_messages(chat_id, msg)
                     if len(cronres['data']) <= 4000:
                         msg = await jdbot.send_message(chat_id, f"指令发送成功，结果如下：\n{cronres['data']}")

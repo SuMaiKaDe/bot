@@ -420,16 +420,16 @@ def V4cron(fun, crondata):
                         'task ')[-1].split(' ')[0].split('/')[-1].replace('\n', '')] = cron
         elif fun == 'add':
             v4crons.append(crondata)
-            res = {'code': 200, 'data': 'sucess'}
+            res = {'code': 200, 'data': 'success'}
         elif fun == 'run':
             cmd(f'jtask {crondata.split("task")[-1]}')
-            res = {'code': 200, 'data': 'sucess'}
+            res = {'code': 200, 'data': 'success'}
         elif fun == 'edit':
             ocron, ncron = crondata.split('-->')
             i = v4crons.index(ocron)
             v4crons.pop(i)
             v4crons.insert(i, ncron)
-            res = {'code': 200, 'data': 'sucess'}
+            res = {'code': 200, 'data': 'success'}
         elif fun == 'disable':
             i = v4crons.index(crondata)
             crondatal = list(crondata)
@@ -437,17 +437,17 @@ def V4cron(fun, crondata):
             ncron = ''.join(crondatal)
             v4crons.pop(i)
             v4crons.insert(i, ncron)
-            res = {'code': 200, 'data': 'sucess'}
+            res = {'code': 200, 'data': 'success'}
         elif fun == 'enable':
             i = v4crons.index(crondata)
             ncron = crondata.replace('#', '')
             v4crons.pop(i)
             v4crons.insert(i, ncron)
-            res = {'code': 200, 'data': 'sucess'}
+            res = {'code': 200, 'data': 'success'}
         elif fun == 'del':
             i = v4crons.index(crondata)
             v4crons.pop(i)
-            res = {'code': 200, 'data': 'sucess'}
+            res = {'code': 200, 'data': 'success'}
         else:
             res = {'code': 400, 'data': '未知功能'}
         with open(file, 'w', encoding='utf-8') as f:
