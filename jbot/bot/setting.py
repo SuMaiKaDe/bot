@@ -22,7 +22,7 @@ async def my_set(event):
         btn = [Button.inline(i, i) for i in myset if not isinstance(myset[i],dict)]
         btn.append(Button.inline('取消', data='cancel'))
         btn = split_list(btn, 3)
-        async with jdbot.conversation(SENDER, timeout=60) as conv:
+        async with jdbot.conversation(SENDER, timeout=90) as conv:
             msg = await jdbot.edit_message(msg, info, buttons=btn, link_preview=False)
             convdata = await conv.wait_event(press_event(SENDER))
             res = bytes.decode(convdata.data)
@@ -38,11 +38,22 @@ async def my_set(event):
                     await jdbot.send_message(chat_id, '对话已取消')
                     conv.cancel()
                 else:
-                    myset[res] = data.raw_text
-                    with open(_botset, 'w+', encoding='utf-8') as f:
-                        json.dump(myset, f)
-                    await jdbot.delete_messages(chat_id, msg)
-                    await jdbot.send_message(chat_id, '已完成修改，重启后生效')
+                    markup = [Button.inline('确认',data='yes'),Button.inline('取消',data='cancel')]
+                    await jdbot.delete_messages(chat_id,msg)
+                    msg = await jdbot.send_message(chat_id, f'是否确认将 ** {res} ** 设置为 **{data.raw_text}**', buttons=markup)
+                    convdata2 = await conv.wait_event(press_event(SENDER))
+                    res2 = bytes.decode(convdata2.data)
+                    if res2 == 'yes':
+                        myset[res] = data.raw_text
+                        with open(_botset, 'w+', encoding='utf-8') as f:
+                            json.dump(myset, f)
+                        await jdbot.delete_messages(chat_id, msg)
+                        msg = await jdbot.send_message(chat_id, '已完成修改，重启后生效')
+                    else:
+                        conv.cancel()
+                        await jdbot.delete_messages(chat_id, msg)
+                        msg = await jdbot.send_message(chat_id, '对话已取消')
+                        return
     except exceptions.TimeoutError:
         msg = await jdbot.edit_message(msg, '选择已超时，对话已停止')
     except Exception as e:
@@ -64,7 +75,7 @@ async def my_setname(event):
         btn = [Button.inline(i, i) for i in myset['命令别名']]
         btn.append(Button.inline('取消', data='cancel'))
         btn = split_list(btn, 3)
-        async with jdbot.conversation(SENDER, timeout=60) as conv:
+        async with jdbot.conversation(SENDER, timeout=90) as conv:
             msg = await jdbot.edit_message(msg, info, buttons=btn, link_preview=False)
             convdata = await conv.wait_event(press_event(SENDER))
             res = bytes.decode(convdata.data)
@@ -77,14 +88,26 @@ async def my_setname(event):
                 data = await conv.get_response()
                 if data.raw_text == 'cancel' or data.raw_text == '取消':
                     await jdbot.delete_messages(chat_id,msg)
-                    await jdbot.send_message(chat_id, '对话已取消')
+                    msg = await jdbot.send_message(chat_id, '对话已取消')
                     conv.cancel()
                     return
-                myset['命令别名'][res] = data.raw_text
-                with open(_botset, 'w+', encoding='utf-8') as f:
-                    json.dump(myset, f)
-                await jdbot.delete_messages(chat_id, msg)
-                await jdbot.send_message(chat_id, '已完成修改，重启后生效')
+                else:
+                    markup = [Button.inline('确认',data='yes'),Button.inline('取消',data='cancel')]
+                    await jdbot.delete_messages(chat_id,msg)
+                    msg = await jdbot.send_message(chat_id, f'是否确认将 ** {res} ** 设置为 **{data.raw_text}**', buttons=markup)
+                    convdata2 = await conv.wait_event(press_event(SENDER))
+                    res2 = bytes.decode(convdata2.data)
+                    if res2 == 'yes':
+                        myset['命令别名'][res] = data.raw_text
+                        with open(_botset, 'w+', encoding='utf-8') as f:
+                            json.dump(myset, f)
+                        await jdbot.delete_messages(chat_id, msg)
+                        msg = await jdbot.send_message(chat_id, '已完成修改，重启后生效')
+                    else:
+                        conv.cancel()
+                        await jdbot.delete_messages(chat_id, msg)
+                        msg = await jdbot.send_message(chat_id, '对话已取消')
+                        return
     except exceptions.TimeoutError:
         msg = await jdbot.edit_message(msg, '选择已超时，对话已停止')
     except Exception as e:

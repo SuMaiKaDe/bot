@@ -53,6 +53,15 @@ async def my_b(event):
         await jdbot.edit_message(msg, f'something wrong,I\'m sorry\n{str(e)}')
         logger.error(f'something wrong,I\'m sorry\n{str(e)}')
 
+
+@jdbot.on(events.NewMessage(from_users=chat_id, pattern=r'^/clearboard$'))
+async def my_clear(event):
+    try:
+        await jdbot.send_message(chat_id, '已清空您的keyboard',buttons=Button.clear())
+    except Exception as e:
+        await jdbot.send_message(chat_id, f'something wrong,I\'m sorry\n{str(e)}')
+        logger.error(f'something wrong,I\'m sorry\n{str(e)}')
+
 if chname:
     jdbot.add_event_handler(my_a, events.NewMessage(
         from_users=chat_id, pattern=mybot['命令别名']['a']))
