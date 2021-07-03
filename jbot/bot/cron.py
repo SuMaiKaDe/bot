@@ -105,7 +105,7 @@ async def my_cron(event):
                         await jdbot.delete_messages(chat_id, msg)
                         if len(cronres['data']) <= 4000:
                             msg = await jdbot.send_message(chat_id, f"指令发送成功，结果如下：\n{cronres['data']}")
-                        elif len(res) > 4000:
+                        elif len(cronres['data']) > 4000:
                             _log = f'{_LogDir}/bot/qlcron.log'
                             with open(_log, 'w+', encoding='utf-8') as f:
                                 f.write(cronres['data'])
