@@ -12,16 +12,21 @@ async def my_help(event):
         text = 'mhelp'
     mhelp = '''
 a-自定义快捷按钮
+addcron-增加定时
 bean-获取收支
+clearboard-删除快捷按钮
 chart-统计收支变化
+cron-管理定时设定
 cmd-执行cmd命令
 edit-编辑文件
+env-管理环境变量
 dl-下载文件
 getcookie-扫码获取cookie
 getfile-获取jd目录下文件
 log-选择日志
 node-执行js脚本文件，绝对路径
 set-BOT设置
+setname-设置命令别名
 setshort-设置自定义按钮
 snode-选择脚本后台运行
 start-开始使用本程序'''
