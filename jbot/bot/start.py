@@ -14,8 +14,8 @@ async def my_start(event):
     /chart 获取京豆变化数据柱状图和曲线图。例：/chart 1，获取账号1京豆变化。
     /clearboard 删除快捷输入按钮。
     /cmd 执行命令，例：/cmd python3 /python/bot.py，则执行python目录下的bot.py。不建议使用BOT使用并发，可能产生不明原因的崩溃。 
-    /cron 进行cron管理，
-    /dl 下载文件
+    /cron 进行cron管理。
+    /dl 下载文件，例：/dl https://raw.githubusercontent.com/SuMaiKaDe/bot/main/requirements.txt
     /edit 从/jd目录选择文件并编辑，需要将编辑好信息全部发给BOT，BOT会根据你发的信息进行替换。建议仅编辑config或crontab.list，其他文件慎用！！！
     /env 环境变量管理，仅支持青龙面板。
     /getcookie 扫码获取cookie，30s内可取消，31s~2分钟内不能进行其他交互直到超时或获取到cookie。
