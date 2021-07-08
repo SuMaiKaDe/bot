@@ -1,3 +1,4 @@
+from logging import log
 from PIL import Image, ImageFont, ImageDraw
 from telethon import events
 from .. import jdbot, chat_id, _LogDir, _JdbotDir, logger, mybot, chname
@@ -15,6 +16,7 @@ _font = _JdbotDir + '/font/jet.ttf'
 
 @jdbot.on(events.NewMessage(chats=chat_id, pattern=r'^/bean'))
 async def my_bean(event):
+    logger.info(f'即将执行{event.raw_text}命令')
     msg_text = event.raw_text.split(' ')
     try:
         msg = await jdbot.send_message(chat_id, '正在查询，请稍后')
@@ -22,6 +24,7 @@ async def my_bean(event):
             text = msg_text[-1]
         else:
             text = None
+        logger.info(f'命令参数值为：{text}')
         if V4 and text == 'in':
             subprocess.check_output(
                 'jcsv', shell=True, stderr=subprocess.STDOUT)
@@ -35,9 +38,10 @@ async def my_bean(event):
             await jdbot.delete_messages(chat_id, msg)
             await jdbot.send_message(chat_id, '您的近日支出情况', file=_botimg)
         elif not V4 and (text == 'in' or text == 'out' or text == None):
-            await jdbot.edit_message(msg, 'QL暂不支持使用bean in、out ,请使用/bean n n为数字')
+            await jdbot.edit_message(msg, 'QL暂不支持使用bean in、out \n请使用/bean n n为数字')
         elif text and int(text):
             beanin, beanout, beanstotal, date = get_bean_data(int(text))
+            logger.info(f'获取到的数据为：{beanin}-{beanout}-{beanstotal}-{date}')
             if not beanout:
                 await jdbot.delete_messages(chat_id, msg)
                 await jdbot.send_message(chat_id, f'something wrong,I\'m sorry\n{str(beanin)}')
@@ -52,6 +56,7 @@ async def my_bean(event):
             await jdbot.delete_messages(chat_id, msg)
             await jdbot.send_message(chat_id, '您的总京豆情况', file=_botimg)
         else:
+            logger.info(f'青龙暂仅支持/bean n n为账号数字')
             await jdbot.delete_messages(chat_id, msg)
             await jdbot.send_message(chat_id, '青龙暂仅支持/bean n n为账号数字')
     except Exception as e:
@@ -64,6 +69,7 @@ if chname:
 
 
 def creat_bean_count(date, beansin, beansout, beanstotal):
+    logger.info(f'正在单账户生成图片')
     tb = PrettyTable()
     tb.add_column('DATE', date)
     tb.add_column('BEANIN', beansin)
@@ -74,9 +80,11 @@ def creat_bean_count(date, beansin, beansout, beanstotal):
     dr = ImageDraw.Draw(im)
     dr.text((10, 5), str(tb), font=font, fill="#000000")
     im.save(_botimg)
+    logger.info(f'图片生成完成')
 
 
 def creat_bean_counts(csv_file):
+    logger.info(f'正在多账户生成图片')
     with open(csv_file, 'r', encoding='utf-8') as f:
         data = f.readlines()
     tb = PrettyTable()
@@ -101,3 +109,4 @@ def creat_bean_counts(csv_file):
     font = ImageFont.truetype(_font, 18)
     dr.text((10, 5), str(tb), font=font, fill="#000000")
     im.save(_botimg)
+    logger.info(f'图片生成完成')

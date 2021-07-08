@@ -9,6 +9,7 @@ from .utils import split_list, logger, press_event
 @jdbot.on(events.NewMessage(from_users=chat_id, pattern='/edit'))
 async def my_edit(event):
     '''定义编辑文件操作'''
+    logger.info(f'即将执行{event.raw_text}命令')
     msg_text = event.raw_text.split(' ')
     SENDER = event.sender_id
     path = _JdDir
@@ -17,6 +18,7 @@ async def my_edit(event):
         text = msg_text[-1]
     else:
         text = None
+    logger.info(f'命令参数值为：{text}')
     if text and os.path.isfile(text):
         try:
             with open(text, 'r', encoding='utf-8') as f:

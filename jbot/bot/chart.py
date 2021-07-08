@@ -7,6 +7,7 @@ _botimg = f'{_LogDir}/bot/bean.jpeg'
 
 @jdbot.on(events.NewMessage(chats=chat_id, pattern=r'^/chart'))
 async def my_chart(event):
+    logger.info(f'即将执行{event.raw_text}命令')
     msg_text = event.raw_text.split(' ')
     try:
         msg = await jdbot.send_message(chat_id, '正在查询，请稍后')
@@ -14,6 +15,7 @@ async def my_chart(event):
             text = msg_text[-1]
         else:
             text = None
+        logger.info(f'命令参数值为：{text}')
         if text and int(text):
             beanin, beanout, beanstotal, date = get_bean_data(int(text))
             if not beanout:
@@ -28,6 +30,9 @@ async def my_chart(event):
     except Exception as e:
         await jdbot.edit_message(msg, f'something wrong,I\'m sorry\n{str(e)}')
         logger.error(f'something wrong,I\'m sorry\n{str(e)}')
+    finally:
+        logger.info(f'执行{event.raw_text}命令完毕')
+
 
 if chname:
     jdbot.add_event_handler(my_chart, events.NewMessage(
@@ -35,6 +40,7 @@ if chname:
 
 
 def creat_chart(xdata, title, bardata, bardata2, linedate):
+    logger.info(f'即将生成chart图表{title}')
     qc = QuickChart()
     qc.background_color = '#fff'
     qc.width = "1000"
@@ -139,3 +145,4 @@ def creat_chart(xdata, title, bardata, bardata2, linedate):
         }
     }
     qc.to_file(_botimg)
+    logger.info(f'生成chart图表{title}完成')

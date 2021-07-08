@@ -39,9 +39,9 @@ def myck(ckfile):
     ckreg = re.compile(r'pt_key=\S*?;pt_pin=\S*?;')
     cookiefile = r'/ql/db/cookie.db'
     if QL and not os.path.exists(cookiefile):
-        with open(ckfile,'r',encoding='utf-8') as f:
+        with open(ckfile, 'r', encoding='utf-8') as f:
             auth = json.load(f)
-        lines = str(qlenv('search','JD_COOKIE',auth['token']))
+        lines = str(qlenv('search', 'JD_COOKIE', auth['token']))
     elif QL:
         with open(f'{_ConfigDir}/cookie.sh', 'r', encoding='utf-8') as f:
             lines = f.read()
@@ -193,7 +193,6 @@ async def logbtn(conv, SENDER, path, msg, page, filelist):
             return path, msg, page, markup
         elif res == 'updir':
             path = '/'.join(path.split('/')[:-1])
-            logger.info(path)
             if path == '':
                 path = _JdDir
             return path, msg, page, None
@@ -293,13 +292,13 @@ def mycron(lines):
 
 
 def upcron(cron):
-    owninfo = '# 需自行将脚本放在scripts文件夹下，mtask命令运行的脚本可以以jd_、jr_、jx_开头，如'
+    owninfo = '# mtask任务区域'
     with open(_CronFile, 'r', encoding='utf-8') as f:
         lines = f.readlines()
     for line in lines:
         if owninfo in line:
             i = lines.index(line)
-            lines.insert(i, cron+'\n')
+            lines.insert(i+1, cron+'\n')
             break
     with open(_CronFile, 'w', encoding='utf-8') as f:
         f.write(''.join(lines))
@@ -455,7 +454,6 @@ def V4cron(fun, crondata):
     except Exception as e:
         res = {'code': 400, 'data': str(e)}
     finally:
-        logger.info(res)
         return res
 
 
@@ -472,7 +470,6 @@ def qlenv(fun, envdata, token):
     headers = {
         'Authorization': f'Bearer {token}'
     }
-    logger.info(f'{fun}-->{envdata}-->{token}')
     try:
         if fun == 'search':
             params = {

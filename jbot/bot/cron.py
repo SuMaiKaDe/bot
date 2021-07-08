@@ -9,6 +9,7 @@ from ..bot.utils import QL, press_event, split_list, cronmanger, _Auth
 @jdbot.on(events.NewMessage(from_users=chat_id, pattern=r'^/cron'))
 async def my_cron(event):
     '''接收/cron后执行程序'''
+    logger.info(f'即将执行{event.raw_text}命令')
     msg_text = event.raw_text.split(' ')
     try:
         SENDER = event.sender_id
@@ -26,6 +27,7 @@ async def my_cron(event):
             text = msg_text[-1]
         else:
             text = None
+        logger.info(f'命令参数值为：{text}')
         if not text:
             await jdbot.edit_message(msg, '请正确使用cron命令,后边需跟关键字。/cron abcd')
             return
@@ -33,6 +35,7 @@ async def my_cron(event):
         async with jdbot.conversation(SENDER, timeout=30) as conv:
             while go_up:
                 res = cronmanger('search', text, auth['token'])
+                logger.info(f'任务查询结果：{res}')
                 if res['code'] == 200:
                     await jdbot.delete_messages(chat_id, msg)
                     if QL:
@@ -116,8 +119,10 @@ async def my_cron(event):
                 else:
                     go_up = False
                     await jdbot.send_message(chat_id, f'something wrong,I\'m sorry\n{str(res["data"])}')
+        logger.info(f'执行{event.raw_text}命令完毕')
     except exceptions.TimeoutError:
         msg = await jdbot.edit_message(msg, '选择已超时，对话已停止')
+        logger.error(f'选择已超时，对话已停止')
     except Exception as e:
         msg = await jdbot.edit_message(msg, f'something wrong,I\'m sorry\n{str(e)}')
         logger.error(f'something wrong,I\'m sorry\n{str(e)}')

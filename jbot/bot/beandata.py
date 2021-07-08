@@ -4,7 +4,7 @@ import time
 import json
 from datetime import timedelta
 from datetime import timezone
-from .utils import _ConfigFile, myck
+from .utils import _ConfigFile, myck,logger
 SHA_TZ = timezone(
     timedelta(hours=8),
     name='Asia/Shanghai',
@@ -42,6 +42,7 @@ def getparms(page):
 
 
 def getbeans(ck):
+    logger.info('即将从京东获取京豆数据')
     try:
         _7day = True
         page = 0
@@ -80,13 +81,17 @@ def getbeans(ck):
                     if i['createDate'].split(' ')[0] not in str(_7days):
                         _7day = False
             else:
+                logger.info(f'未能从京东获取到京豆数据，发生了错误{str(res)}')
                 return f'error  {str(res)}', None, None
+        logger.info(f'获取到京豆数据')
         return beansin, beansout, _7days
     except Exception as e:
+        logger.info(f'未能从京东获取到京豆数据，发生了错误{str(e)}')
         return f'error  {str(e)}'
 
 
 def getTotal(ck):
+    logger.info('即将从京东获取京豆总量')
     headers = {
         "Host": "wxapp.m.jd.com",
         "Connection": "keep-alive",
@@ -99,11 +104,14 @@ def getTotal(ck):
     jurl = "https://wxapp.m.jd.com/kwxhome/myJd/home.json"
     resp = session.get(jurl, headers=headers,timeout=100).text
     res = json.loads(resp)
+    logger.info(f'从京东获取京豆总量{res["user"]["jingBean"]}')
     return res['user']['jingBean']
 
 
 def get_bean_data(i):
+    logger.info('开始执行京豆收支')
     cookies = myck(_ConfigFile)
+    logger.info(f'共获取到{len(cookies)},将获取第{i}个账户京豆数据')
     ck = cookies[i-1]
     beansin, beansout, _7days = getbeans(ck)
     beantotal = getTotal(ck)
@@ -117,4 +125,5 @@ def get_bean_data(i):
             beanin.append(beansin[i])
             beanout.append(int(str(beansout[i]).replace('-', '')))
             beanstotal.append(beantotal)
+        logger.info(f'获取到如下数据：\n日期：{_7days[::-1]}\n收入：{beanin[::-1]}\n支出：{beanout[::-1]}\n总量：{beanstotal[::-1]}')
         return beanin[::-1], beanout[::-1], beanstotal[::-1], _7days[::-1]
