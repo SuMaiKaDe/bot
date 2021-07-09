@@ -47,6 +47,6 @@ start-开始使用本程序'''
             - 加入机器人黑名单后，使用 | 区隔设置垃圾话，会随机挑选垃圾话回复该用户'''
     cron = '''    - /cron 命令
         - /cron 加关键字 可进行cron管理'''
-    helpme = {'bean': bean, 'cmd': cmd, 'edit': edit, 'getcookie': getcookie, 'node': node,
+    helpme = {'bean': bean, 'cmd': cmd, 'edit': edit, 'node': node,
               'getfile': getfile, 'setshort': setshort, 'snode': snode, 'chart': chart, 'mhelp': mhelp, 'set': botset, 'cron': cron}
     await jdbot.send_message(chat_id, helpme[text])
