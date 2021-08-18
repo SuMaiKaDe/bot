@@ -483,7 +483,7 @@ def qlenv(fun, envdata, token):
                 'value': envdata['value'],
                 'remarks': envdata['remarks'] if 'remarks' in envdata.keys() else ''
             }
-            res = requests.post(url, data=data, headers=headers).json()
+            res = requests.post(url, json=[data], headers=headers).json()
         elif fun == 'edit':
             data = {
                 'name': envdata['name'],
