@@ -9,9 +9,7 @@ async def my_start(event):
     /help 获取命令，可直接发送至botfather。
     /start 开始使用本程序。
     /a 使用你的自定义快捷按钮。
-    /addcron 增加cron，例：0 0 * * * jtask xxxxx。
-    /bean 获取变化，默认为总京豆收支。/bean in 进账，/bean out 支出。
-    /chart 获取变化数据柱状图和曲线图。例：/chart 1，获取账号1变化。
+    /addcron 增加cron，例：0 0 * * * jtask 
     /clearboard 删除快捷输入按钮。
     /cmd 执行命令，例：/cmd python3 /python/bot.py，则执行python目录下的bot.py。不建议使用BOT使用并发，可能产生不明原因的崩溃。 
     /cron 进行cron管理。
