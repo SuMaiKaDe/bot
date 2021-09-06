@@ -1,5 +1,6 @@
 import requests
 import os
+from functools import wraps
 from telethon import events, Button
 import re
 import time
@@ -33,6 +34,36 @@ elif 'QL_DIR' in os.environ.keys():
 else:
     _DiyDir = None
     jdcmd = 'node'
+
+
+def Ver_Main(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        res = func(*args, **kwargs)
+        msg = json.dumps(res)
+        if msg.find('valid sign') > -1:
+            code, msg = qlLogin()
+            return {'code': 400, 'data': msg}
+        if res['code'] != 200:
+            res['data'] = res['message']
+        return res
+    return wrapper
+
+
+def qlLogin():
+    url = 'http://127.0.0.1:5600/api/login'
+    with open(_Auth, 'r', encoding='utf-8') as f:
+        auth = json.load(f)
+    data = {'username': auth['username'], 'password': auth['password']}
+    try:
+        res = requests.post(url, json=data).json()
+        if res['code'] == 200:
+            return 200, '自动登录成功，请重新执行命令'
+        if res['message'].find('两步验证') > -1:
+            return 400, '当前登录已过期，且已开启两步登录验证，请关闭验证或使用网页登录后再使用本机器人'
+        return 400, res['message']
+    except Exception as e:
+        return 400, '自动登录出错：' + str(e)
 
 
 def myck(ckfile):
@@ -92,6 +123,11 @@ async def cmd(cmdtext):
             cmdtext, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
         res_bytes, res_err = await p.communicate()
         res = res_bytes.decode('utf-8')
+        if res.find('先登录') > -1:
+            await jdbot.delete_messages(chat_id, msg)
+            res, msg = qlLogin()
+            await jdbot.send_message(chat_id, msg)
+            return
         if len(res) == 0:
             await jdbot.edit_message(msg, '已执行，但返回值为空')
         elif len(res) <= 4000:
@@ -346,6 +382,7 @@ async def cronup(jdbot, conv, resp, filename, msg, SENDER, markup, path):
         await jdbot.send_message(chat_id, f'{filename}已保存到{path}，并已尝试添加定时任务')
 
 
+@Ver_Main
 def qlcron(fun, crondata, token):
     url = 'http://127.0.0.1:5600/api/crons'
     headers = {
@@ -465,6 +502,7 @@ def cronmanger(fun, crondata, token):
     return res
 
 
+@Ver_Main
 def qlenv(fun, envdata, token):
     url = 'http://127.0.0.1:5600/api/envs'
     headers = {
