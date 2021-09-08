@@ -41,7 +41,7 @@ def Ver_Main(func):
     def wrapper(*args, **kwargs):
         res = func(*args, **kwargs)
         msg = json.dumps(res)
-        if msg.find('valid sign') > -1:
+        if msg.find('valid sign') > -1 or msg.find('Bearer [token]') > -1:
             code, msg = qlLogin()
             return {'code': 400, 'data': msg}
         if res['code'] != 200:
@@ -84,7 +84,7 @@ def myck(ckfile):
         if ck == 'pt_key=xxxxxxxxxx;pt_pin=xxxx;':
             cookies.remove(ck)
             break
-    return cookies
+    return cookies,lines
 
 
 def split_list(datas, n, row: bool = True):
