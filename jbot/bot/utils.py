@@ -60,7 +60,7 @@ def qlLogin():
         if res['code'] == 200:
             return 200, '自动登录成功，请重新执行命令'
         if res['message'].find('两步验证') > -1:
-            return 400, ' 当前登录已过期，且已开启两步登录验证，请关闭验证或使用网页登录后再使用本机器人'
+            return 400, ' 当前登录已过期，且已开启两步登录验证，请使用命令/auth 六位验证码完成登录'
         return 400, res['message']
     except Exception as e:
         return 400, '自动登录出错：' + str(e)
