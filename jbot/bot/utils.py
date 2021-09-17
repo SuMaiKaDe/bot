@@ -68,7 +68,7 @@ def qlLogin():
 
 def myck(ckfile):
     ckreg = re.compile(r'pt_key=\S*?;.*?pt_pin=\S*?;')
-    cookiefile = r'/ql/db/cookie.db'
+    cookiefile = '/ql/db/cookie.db'
     if QL and not os.path.exists(cookiefile):
         with open(ckfile, 'r', encoding='utf-8') as f:
             auth = json.load(f)
