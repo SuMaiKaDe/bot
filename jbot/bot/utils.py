@@ -84,7 +84,9 @@ def myck(ckfile):
         if ck == 'pt_key=xxxxxxxxxx;pt_pin=xxxx;':
             cookies.remove(ck)
             break
-    return cookies,lines
+    if len(cookies) == 0:
+        cookies.append(lines)
+    return cookies
 
 
 def split_list(datas, n, row: bool = True):

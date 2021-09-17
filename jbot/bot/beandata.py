@@ -103,8 +103,9 @@ def getTotal(ck):
 
 
 def get_bean_data(i):
-    cookies,msg = myck(_ConfigFile)
-    if len(cookies) < i:
+    cookies = myck(_ConfigFile)
+    if cookies[0].find('pt_key=') == -1:
+        msg = cookies[0]
         if msg.find('code') == -1:
             msg = 'cookie获取失败'
         return msg, None, None, None
