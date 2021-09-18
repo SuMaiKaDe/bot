@@ -84,7 +84,7 @@ def myck(ckfile):
         if ck == 'pt_key=xxxxxxxxxx;pt_pin=xxxx;':
             cookies.remove(ck)
             break
-    if len(cookies) < 1:
+    if len(cookies) == 0:
         cookies.append(lines)
     return cookies
 
