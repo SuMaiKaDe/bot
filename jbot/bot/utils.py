@@ -68,7 +68,7 @@ def qlLogin():
 
 def myck(ckfile):
     ckreg = re.compile(r'pt_key=\S*?;.*?pt_pin=\S*?;')
-    cookiefile = r'/ql/db/cookie.db'
+    cookiefile = '/ql/db/cookie.db'
     if QL and not os.path.exists(cookiefile):
         with open(ckfile, 'r', encoding='utf-8') as f:
             auth = json.load(f)
@@ -84,7 +84,9 @@ def myck(ckfile):
         if ck == 'pt_key=xxxxxxxxxx;pt_pin=xxxx;':
             cookies.remove(ck)
             break
-    return cookies,lines
+    if len(cookies) == 0:
+        cookies.append(lines)
+    return cookies
 
 
 def split_list(datas, n, row: bool = True):

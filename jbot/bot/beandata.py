@@ -103,12 +103,14 @@ def getTotal(ck):
 
 
 def get_bean_data(i):
-    cookies,msg = myck(_ConfigFile)
+    cookies = myck(_ConfigFile)
     if len(cookies) < i:
-        if msg.find('code') == -1:
-            msg = 'cookie获取失败'
+        return '查询账号不存在', None, None, None
+    msg = cookies[0]
+    if msg.find('pt_key=') == -1:
+        msg = 'cookie获取失败' if msg.find('code') == -1 else msg
         return msg, None, None, None
-    ck = cookies[i-1]
+    ck = cookies[i - 1]
     beansin, beansout, _7days = getbeans(ck)
     beantotal = getTotal(ck)
     if not beansout:
