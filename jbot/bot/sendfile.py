@@ -1,27 +1,32 @@
 from telethon import events
-from .. import jdbot, chat_id, _LogDir, _JdDir, mybot, chname
-from .utils import logbtn
+from .. import LOG_DIR, jdbot, chat_id, LOG_DIR, JD_DIR, BOT_SET, ch_name
+from .utils import log_btn
 import os
 
 
 @jdbot.on(events.NewMessage(from_users=chat_id, pattern=r'^/log'))
-async def my_log(event):
+async def bot_log(event):
     '''定义日志文件操作'''
     SENDER = event.sender_id
-    path = _LogDir
+    path = LOG_DIR
     page = 0
     filelist = None
     async with jdbot.conversation(SENDER, timeout=60) as conv:
         msg = await conv.send_message('正在查询，请稍后')
         while path:
-            path, msg, page, filelist = await logbtn(conv, SENDER, path, msg, page, filelist)
+            path, msg, page, filelist = await log_btn(conv, SENDER, path, msg, page, filelist)
+
+@jdbot.on(events.NewMessage(from_users=chat_id, pattern=r'^/botlog'))
+async def bot_run_log(event):
+    '''定义日志文件操作'''
+    await jdbot.send_message(chat_id,'bot运行日志',file=f'{LOG_DIR}/bot/run.log')
 
 
 @jdbot.on(events.NewMessage(from_users=chat_id, pattern=r'^/getfile'))
-async def my_getfile(event):
+async def bot_getfile(event):
     '''定义获取文件命令'''
     SENDER = event.sender_id
-    path = _JdDir
+    path = JD_DIR
     page = 0
     msg_text = event.raw_text.split(' ')
     if len(msg_text) == 2:
@@ -42,10 +47,10 @@ async def my_getfile(event):
     async with jdbot.conversation(SENDER, timeout=60) as conv:
         msg = await conv.send_message('正在查询，请稍后')
         while path:
-            path, msg, page, filelist = await logbtn(conv, SENDER, path, msg, page, filelist)
+            path, msg, page, filelist = await log_btn(conv, SENDER, path, msg, page, filelist)
 
-if chname:
-    jdbot.add_event_handler(my_getfile, events.NewMessage(
-        from_users=chat_id, pattern=mybot['命令别名']['getfile']))
-    jdbot.add_event_handler(my_log, events.NewMessage(
-        from_users=chat_id, pattern=mybot['命令别名']['log']))
+if ch_name:
+    jdbot.add_event_handler(bot_getfile, events.NewMessage(
+        from_users=chat_id, pattern=BOT_SET['命令别名']['getfile']))
+    jdbot.add_event_handler(bot_log, events.NewMessage(
+        from_users=chat_id, pattern=BOT_SET['命令别名']['log']))

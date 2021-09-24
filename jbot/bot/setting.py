@@ -1,16 +1,16 @@
 import json
 from telethon import events, Button
 from asyncio import exceptions
-from .. import jdbot, chat_id, _botset, mybot, chname
+from .. import jdbot, chat_id, BOT_SET_JSON_FILE_USER, BOT_SET, ch_name
 from .utils import split_list, logger, press_event
 
 
 @jdbot.on(events.NewMessage(from_users=chat_id, pattern='^/set$'))
-async def my_set(event):
+async def bot_set(event):
     SENDER = event.sender_id
     try:
         msg = await jdbot.send_message(chat_id, '请稍后，正在查询')
-        with open(_botset, 'r', encoding='utf-8') as f:
+        with open(BOT_SET_JSON_FILE_USER, 'r', encoding='utf-8') as f:
             myset = json.load(f)
         info = '您目前设置如下：\n'
         for i in myset:
@@ -45,7 +45,7 @@ async def my_set(event):
                     res2 = bytes.decode(convdata2.data)
                     if res2 == 'yes':
                         myset[res] = data.raw_text
-                        with open(_botset, 'w+', encoding='utf-8') as f:
+                        with open(BOT_SET_JSON_FILE_USER, 'w+', encoding='utf-8') as f:
                             json.dump(myset, f)
                         await jdbot.delete_messages(chat_id, msg)
                         msg = await jdbot.send_message(chat_id, '已完成修改，重启后生效')
@@ -62,11 +62,11 @@ async def my_set(event):
 
 
 @jdbot.on(events.NewMessage(from_users=chat_id, pattern='^/setname$'))
-async def my_setname(event):
+async def bot_setname(event):
     SENDER = event.sender_id
     try:
         msg = await jdbot.send_message(chat_id, '请稍后，正在查询')
-        with open(_botset, 'r', encoding='utf-8') as f:
+        with open(BOT_SET_JSON_FILE_USER, 'r', encoding='utf-8') as f:
             myset = json.load(f)
         info = '您目前命令别名设置如下：\n'
         for i in myset['命令别名']:
@@ -99,7 +99,7 @@ async def my_setname(event):
                     res2 = bytes.decode(convdata2.data)
                     if res2 == 'yes':
                         myset['命令别名'][res] = data.raw_text
-                        with open(_botset, 'w+', encoding='utf-8') as f:
+                        with open(BOT_SET_JSON_FILE_USER, 'w+', encoding='utf-8') as f:
                             json.dump(myset, f)
                         await jdbot.delete_messages(chat_id, msg)
                         msg = await jdbot.send_message(chat_id, '已完成修改，重启后生效')
@@ -114,8 +114,8 @@ async def my_setname(event):
         msg = await jdbot.edit_message(msg, f'something wrong,I\'m sorry\n{str(e)}')
         logger.error(f'something wrong,I\'m sorry\n{str(e)}')
 
-if chname:
-    jdbot.add_event_handler(my_set, events.NewMessage(
-        from_users=chat_id, pattern=mybot['命令别名']['set']))
-    jdbot.add_event_handler(my_setname, events.NewMessage(
-        from_users=chat_id, pattern=mybot['命令别名']['setname']))
+if ch_name:
+    jdbot.add_event_handler(bot_set, events.NewMessage(
+        from_users=chat_id, pattern=BOT_SET['命令别名']['set']))
+    jdbot.add_event_handler(bot_setname, events.NewMessage(
+        from_users=chat_id, pattern=BOT_SET['命令别名']['setname']))

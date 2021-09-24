@@ -1,9 +1,9 @@
 from telethon import events
-from .. import jdbot, chat_id,chname
+from .. import jdbot, chat_id,ch_name
 
 
 @jdbot.on(events.NewMessage(from_users=chat_id, pattern='/start'))
-async def my_start(event):
+async def bot_start(event):
     '''接收/start命令后执行程序'''
     msg = '''使用方法如下：
     /help 获取命令，可直接发送至botfather。
@@ -27,5 +27,5 @@ async def my_start(event):
     此外，直接发送文件至BOT，会让您选择保存到目标文件夹，支持保存并运行。'''
     await jdbot.send_message(chat_id, msg)
 
-if chname:
-    jdbot.add_event_handler(my_start,events.NewMessage(from_users=chat_id, pattern='开始'))
+if ch_name:
+    jdbot.add_event_handler(bot_start,events.NewMessage(from_users=chat_id, pattern='开始'))

@@ -4,7 +4,7 @@ import os
 from . import logger
 
 
-def load_diy(module, path):
+def load_module(module, path):
     files = os.listdir(path)
     for file in files:
         try:

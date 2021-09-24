@@ -1,37 +1,37 @@
 from telethon import events
-from .. import jdbot, chat_id, _LogDir, logger, mybot, chname
+from .. import jdbot, chat_id, LOG_DIR, logger, BOT_SET, ch_name
 from ..bot.quickchart import QuickChart
 from .beandata import get_bean_data
-_botimg = f'{_LogDir}/bot/bean.jpeg'
+BEAN_IMG = f'{LOG_DIR}/bot/bean.jpeg'
 
 
 @jdbot.on(events.NewMessage(chats=chat_id, pattern=r'^/chart'))
 async def my_chart(event):
     msg_text = event.raw_text.split(' ')
+    msg = await jdbot.send_message(chat_id, '正在查询，请稍后')
     try:
-        msg = await jdbot.send_message(chat_id, '正在查询，请稍后')
-        if isinstance(msg_text,list) and len(msg_text) == 2:
+        if isinstance(msg_text, list) and len(msg_text) == 2:
             text = msg_text[-1]
         else:
             text = None
         if text and int(text):
-            beanin, beanout, beanstotal, date = get_bean_data(int(text))
-            if not beanout:
-                msg = await jdbot.edit_message(msg, f'something wrong,I\'m sorry\n{str(beanin)}')
+            res = get_bean_data(int(text))
+            if res['code'] != 200:
+                msg = await jdbot.edit_message(msg, f'something wrong,I\'m sorry\n{str(res["data"])}')
             else:
-                creat_chart(date, f'账号{str(text)}',
-                            beanin, beanout, beanstotal[1:])
-                await jdbot.delete_messages(chat_id,msg)
-                msg = await jdbot.send_message(chat_id, f'您的账号{text}收支情况', file=_botimg)
+                creat_chart(res['data'][3], f'账号{str(text)}',
+                            res['data'][0], res['data'][1], res['data'][2][1:])
+                await jdbot.delete_messages(chat_id, msg)
+                msg = await jdbot.send_message(chat_id, f'您的账号{text}收支情况', file=BEAN_IMG)
         else:
             msg = await jdbot.edit_message(msg, '请正确使用命令\n/chart n n为第n个账号')
     except Exception as e:
         await jdbot.edit_message(msg, f'something wrong,I\'m sorry\n{str(e)}')
         logger.error(f'something wrong,I\'m sorry\n{str(e)}')
 
-if chname:
+if ch_name:
     jdbot.add_event_handler(my_chart, events.NewMessage(
-        chats=chat_id, pattern=mybot['命令别名']['chart']))
+        chats=chat_id, pattern=BOT_SET['命令别名']['chart']))
 
 
 def creat_chart(xdata, title, bardata, bardata2, linedate):
@@ -138,4 +138,4 @@ def creat_chart(xdata, title, bardata, bardata2, linedate):
             }
         }
     }
-    qc.to_file(_botimg)
+    qc.to_file(BEAN_IMG)

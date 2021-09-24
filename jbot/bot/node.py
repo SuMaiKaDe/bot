@@ -1,10 +1,10 @@
 from telethon import events
-from .. import jdbot, chat_id, mybot, chname
-from .utils import cmd, jdcmd
+from .. import jdbot, chat_id, BOT_SET, ch_name
+from .utils import cmd, TASK_CMD
 
 
 @jdbot.on(events.NewMessage(from_users=chat_id, pattern='/node'))
-async def my_node(event):
+async def bot_node(event):
     '''接收/node命令后执行程序'''
     msg_text = event.raw_text.split(' ')
     if isinstance(msg_text,list) and len(msg_text) == 2:
@@ -18,8 +18,8 @@ async def my_node(event):
         '''
         await jdbot.send_message(chat_id, res)
     else:
-        await cmd('{} {}'.format(jdcmd, text))
+        await cmd('{} {}'.format(TASK_CMD, text))
 
-if chname:
-    jdbot.add_event_handler(my_node, events.NewMessage(
-        from_users=chat_id, pattern=mybot['命令别名']['node']))
+if ch_name:
+    jdbot.add_event_handler(bot_node, events.NewMessage(
+        from_users=chat_id, pattern=BOT_SET['命令别名']['node']))

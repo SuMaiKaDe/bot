@@ -4,7 +4,7 @@ import time
 import json
 from datetime import timedelta
 from datetime import timezone
-from .utils import _ConfigFile, myck
+from .utils import CONFIG_SH_FILE, get_cks, AUTH_FILE, QL
 SHA_TZ = timezone(
     timedelta(hours=8),
     name='Asia/Shanghai',
@@ -16,7 +16,7 @@ session = requests.session()
 url = "https://api.m.jd.com/api"
 
 
-def getbody(page):
+def gen_body(page):
     body = {
         "beginDate": datetime.datetime.utcnow().replace(tzinfo=timezone.utc).astimezone(SHA_TZ).strftime("%Y-%m-%d %H:%M:%S"),
         "endDate": datetime.datetime.utcnow().replace(tzinfo=timezone.utc).astimezone(SHA_TZ).strftime("%Y-%m-%d %H:%M:%S"),
@@ -26,9 +26,9 @@ def getbody(page):
     return body
 
 
-def getparms(page):
-    body = getbody(page)
-    parms = {
+def gen_params(page):
+    body = gen_body(page)
+    params = {
         "functionId": "jposTradeQuery",
         "appid": "swat_miniprogram",
         "client": "tjj_m",
@@ -38,12 +38,12 @@ def getparms(page):
         "timestamp": int(round(time.time() * 1000)),
         "body": json.dumps(body)
     }
-    return parms
+    return params
 
 
-def getbeans(ck):
+def get_beans_7days(ck):
     try:
-        _7day = True
+        day_7 = True
         page = 0
         headers = {
             "Host": "api.m.jd.com",
@@ -55,38 +55,38 @@ def getbeans(ck):
             "Cookie": ck,
             "Referer": "https://servicewechat.com/wxa5bf5ee667d91626/141/page-frame.html",
         }
-        _7days = []
+        days = []
         for i in range(0, 7):
-            _7days.append(
+            days.append(
                 (datetime.date.today() - datetime.timedelta(days=i)).strftime("%Y-%m-%d"))
-        beansin = {key: 0 for key in _7days}
-        beansout = {key: 0 for key in _7days}
-        while _7day:
+        beans_in = {key: 0 for key in days}
+        beans_out = {key: 0 for key in days}
+        while day_7:
             page = page + 1
-            resp = session.get(url, params=getparms(page),
+            resp = session.get(url, params=gen_params(page),
                                headers=headers, timeout=100).text
             res = json.loads(resp)
             if res['resultCode'] == 0:
                 for i in res['data']['list']:
-                    for date in _7days:
+                    for date in days:
                         if str(date) in i['createDate'] and i['amount'] > 0:
-                            beansin[str(date)] = beansin[str(
+                            beans_in[str(date)] = beans_in[str(
                                 date)] + i['amount']
                             break
                         elif str(date) in i['createDate'] and i['amount'] < 0:
-                            beansout[str(date)] = beansout[str(
+                            beans_out[str(date)] = beans_out[str(
                                 date)] + i['amount']
                             break
-                    if i['createDate'].split(' ')[0] not in str(_7days):
-                        _7day = False
+                    if i['createDate'].split(' ')[0] not in str(days):
+                        day_7 = False
             else:
-                return f'error  {str(res)}', None, None
-        return beansin, beansout, _7days
+                return {'code': 400, 'data': res}
+        return {'code': 200, 'data': [beans_in, beans_out, days]}
     except Exception as e:
-        return f'error  {str(e)}'
+        return {'code': 400, 'data': str(e)}
 
 
-def getTotal(ck):
+def get_total_beans(ck):
     headers = {
         "Host": "wxapp.m.jd.com",
         "Connection": "keep-alive",
@@ -103,24 +103,24 @@ def getTotal(ck):
 
 
 def get_bean_data(i):
-    cookies = myck(_ConfigFile)
-    if len(cookies) < i:
-        return '查询账号不存在', None, None, None
-    msg = cookies[0]
-    if msg.find('pt_key=') == -1:
-        msg = 'cookie获取失败' if msg.find('code') == -1 else msg
-        return msg, None, None, None
-    ck = cookies[i - 1]
-    beansin, beansout, _7days = getbeans(ck)
-    beantotal = getTotal(ck)
-    if not beansout:
-        return str(beansin), None, None, None
+    if QL:
+        ckfile = AUTH_FILE
     else:
-        beanin, beanout = [], []
-        beanstotal = [int(beantotal), ]
-        for i in beansin:
-            beantotal = int(beantotal) - int(beansin[i]) - int(beansout[i])
-            beanin.append(beansin[i])
-            beanout.append(int(str(beansout[i]).replace('-', '')))
-            beanstotal.append(beantotal)
-        return beanin[::-1], beanout[::-1], beanstotal[::-1], _7days[::-1]
+        ckfile = CONFIG_SH_FILE
+    cookies = get_cks(ckfile)
+    if cookies:
+        ck = cookies[i-1]
+        beans_res = get_beans_7days(ck)
+        beantotal = get_total_beans(ck)
+        if beans_res['code'] != 200:
+            return beans_res
+        else:
+            beans_in, beans_out = [], []
+            beanstotal = [int(beantotal), ]
+            for i in beans_res['data'][0]:
+                beantotal = int(
+                    beantotal) - int(beans_res['data'][0][i]) - int(beans_res['data'][1][i])
+                beans_in.append(beans_res['data'][0][i])
+                beans_out.append(int(str(beans_out[i]).replace('-', '')))
+                beanstotal.append(beantotal)
+            return {'code': 200, 'data': [beans_in[::-1], beans_out[::-1], beanstotal[::-1], beans_res['data'][2][::-1]]}

@@ -1,7 +1,7 @@
 from telethon import events, Button
 from .utils import split_list, press_event, cmd
 from asyncio import exceptions
-from .. import jdbot, chat_id, _shortcut, logger, mybot, chname
+from .. import jdbot, chat_id, SHORTCUT_FILE, logger, BOT_SET, ch_name
 
 
 @jdbot.on(events.NewMessage(from_users=chat_id, pattern=r'^/a$'))
@@ -9,7 +9,7 @@ async def my_a(event):
     markup = []
     SENDER = event.sender_id
     msg = await jdbot.send_message(chat_id, '正在查询您的常用命令，请稍后')
-    with open(_shortcut, 'r', encoding='utf-8') as f:
+    with open(SHORTCUT_FILE, 'r', encoding='utf-8') as f:
         shortcuts = f.readlines()
     try:
         cmdtext = None
@@ -41,13 +41,13 @@ async def my_a(event):
 async def my_b(event):
     markup = []
     msg = await jdbot.send_message(chat_id, '正在查询您的常用命令，请稍后')
-    with open(_shortcut, 'r', encoding='utf-8') as f:
+    with open(SHORTCUT_FILE, 'r', encoding='utf-8') as f:
         shortcuts = f.readlines()
     try:
         await jdbot.delete_messages(chat_id, msg)
         markup = [Button.text(shortcut, single_use=True)
                   for shortcut in shortcuts if '-->' not in shortcut]
-        markup = split_list(markup, int(mybot['每页列数']))
+        markup = split_list(markup, int(BOT_SET['每页列数']))
         await jdbot.send_message(chat_id, '请做出您的选择：', buttons=markup)
     except Exception as e:
         await jdbot.edit_message(msg, f'something wrong,I\'m sorry\n{str(e)}')
@@ -62,7 +62,7 @@ async def my_clear(event):
         await jdbot.send_message(chat_id, f'something wrong,I\'m sorry\n{str(e)}')
         logger.error(f'something wrong,I\'m sorry\n{str(e)}')
 
-if chname:
+if ch_name:
     jdbot.add_event_handler(my_a, events.NewMessage(
-        from_users=chat_id, pattern=mybot['命令别名']['a']))
-    jdbot.add_event_handler(my_b, events.NewMessage(from_users=chat_id, pattern=mybot['命令别名']['b']))
+        from_users=chat_id, pattern=BOT_SET['命令别名']['a']))
+    jdbot.add_event_handler(my_b, events.NewMessage(from_users=chat_id, pattern=BOT_SET['命令别名']['b']))

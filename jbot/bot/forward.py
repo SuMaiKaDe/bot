@@ -1,16 +1,16 @@
 from telethon import events
-from .. import jdbot, chat_id, mybot, chname
+from .. import jdbot, chat_id, BOT_SET, ch_name
 import random
 
 
 @jdbot.on(events.NewMessage())
 async def my_forward(event):
     try:
-        if mybot['开启机器人转发'].lower() != 'false' and event.chat_id != chat_id and str(event.chat_id) not in mybot['机器人黑名单']:
+        if BOT_SET['开启机器人转发'].lower() != 'false' and event.chat_id != chat_id and str(event.chat_id) not in BOT_SET['机器人黑名单']:
             await jdbot.send_message(chat_id, f'您的机器人接收到消息。来自:```{event.chat_id}```')
             await jdbot.forward_messages(chat_id, event.id, event.chat_id)
-        elif mybot['开启机器人转发'].lower() != 'false' and str(event.chat_id) in mybot['机器人黑名单']:
-            words = mybot['机器人垃圾话'].split('|')
+        elif BOT_SET['开启机器人转发'].lower() != 'false' and str(event.chat_id) in BOT_SET['机器人黑名单']:
+            words = BOT_SET['机器人垃圾话'].split('|')
             word = words[random.randint(0, len(words) - 1)]
             await jdbot.send_message(event.chat_id, str(word))
     except Exception as e:
@@ -33,9 +33,9 @@ async def my_reply(event):
     except Exception as e:
         await jdbot.send_message(chat_id, str(e))
 
-if chname:
+if ch_name:
     jdbot.add_event_handler(my_reply, events.NewMessage(
-        chats=chat_id, pattern=mybot['命令别名']['reply']))
+        chats=chat_id, pattern=BOT_SET['命令别名']['reply']))
 
 
 @jdbot.on(events.NewMessage(incoming=True, chats=chat_id))

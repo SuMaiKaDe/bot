@@ -2,19 +2,19 @@ from telethon import events, Button
 import json
 import os
 from asyncio import exceptions
-from .. import jdbot, chat_id, logger, _LogDir, chname, mybot
-from ..bot.utils import QL, press_event, qlenv, split_list, _Auth
+from .. import jdbot, chat_id, logger, LOG_DIR, ch_name, BOT_SET
+from ..bot.utils import QL, press_event,env_manage_QL, split_list, AUTH_FILE
 
 
 @jdbot.on(events.NewMessage(from_users=chat_id, pattern=r'^/env'))
-async def my_env(event):
+async def bot_env_ql(event):
     '''接收/env后执行程序'''
     msg_text = event.raw_text.split(' ')
     try:
         SENDER = event.sender_id
         msg = await jdbot.send_message(chat_id, '正在查询请稍后')
         if QL:
-            with open(_Auth, 'r', encoding='utf-8') as f:
+            with open(AUTH_FILE, 'r', encoding='utf-8') as f:
                 auth = json.load(f)
             buttons = [{'name': '编辑', 'data': 'edit'}, {
                 'name': '启用', 'data': 'enable'}, {'name': '禁用', 'data': 'disable'}, {'name': '删除', 'data': 'del'},{'name': '上级', 'data': 'up'}, {'name': '取消', 'data': 'cancel'}]
@@ -31,12 +31,12 @@ async def my_env(event):
         go_up = True
         async with jdbot.conversation(SENDER, timeout=120) as conv:
             while go_up:
-                res = qlenv('search', text, auth['token'])
+                res = env_manage_QL('search', text, auth['token'])
                 if res['code'] == 200:
                     await jdbot.delete_messages(chat_id, msg)
                     markup = [Button.inline(
                         i['name'], data=str(res['data'].index(i))) for i in res['data']]
-                    markup = split_list(markup, int(mybot['每页列数']))
+                    markup = split_list(markup, int(BOT_SET['每页列数']))
                     markup.append([Button.inline('取消', data='cancel')])
                     msg = await jdbot.send_message(
                         chat_id, '查询结果如下，点击按钮查看详细信息', buttons=markup)
@@ -55,7 +55,7 @@ async def my_env(event):
                             **res['data'][int(resp)])
                     markup = [Button.inline(i['name'], data=i['data'])
                             for i in buttons]
-                    markup = split_list(markup, int(mybot['每页列数']))
+                    markup = split_list(markup, int(BOT_SET['每页列数']))
                     msg = await jdbot.edit_message(msg, croninfo, buttons=markup)
                     convdata = await conv.wait_event(press_event(SENDER))
                     btnres = bytes.decode(convdata.data)
@@ -80,12 +80,12 @@ async def my_env(event):
                         respones = respones.raw_text
                         res['data'][int(resp)]['name'], res['data'][int(
                             resp)]['value'], res['data'][int(resp)]['remarks'] = respones.split('-->')
-                        cronres = qlenv(
+                        cronres = env_manage_QL(
                             'edit', res['data'][int(resp)], auth['token'])
                     else:
                         go_up = False
                         envdata = res['data'][int(resp)]
-                        cronres = qlenv(
+                        cronres = env_manage_QL(
                             btnres, envdata, auth['token'])
                     if cronres['code'] == 200:
                         if 'data' not in cronres.keys():
@@ -94,7 +94,7 @@ async def my_env(event):
                         if len(cronres['data']) <= 4000:
                             msg = await jdbot.send_message(chat_id, f"指令发送成功，结果如下：\n{cronres['data']}")
                         elif len(res) > 4000:
-                            _log = f'{_LogDir}/bot/qlcron.log'
+                            _log = f'{LOG_DIR}/bot/qlcron.log'
                             with open(_log, 'w+', encoding='utf-8') as f:
                                 f.write(cronres['data'])
                             msg = await jdbot.send_message(chat_id, '日志结果较长，请查看文件', file=_log)
@@ -112,11 +112,11 @@ async def my_env(event):
 
 
 @jdbot.on(events.NewMessage(from_users=chat_id, pattern=r'^/addenv'))
-async def my_addenv(event):
+async def bot_addenv(event):
     try:
         SENDER = event.sender_id
         if QL:
-            with open(_Auth, 'r', encoding='utf-8') as f:
+            with open(AUTH_FILE, 'r', encoding='utf-8') as f:
                 auth = json.load(f)
             info = '名称-->变量值-->备注\n```JD_COOKIE-->pxxxxxxpxxxxxx;-->bot的cookie```'
         else:
@@ -138,7 +138,7 @@ async def my_addenv(event):
                 envdata = {}
                 envdata['name'], envdata['value'], envdata['remarks'] = resp.raw_text.split(
                     '-->')
-                res = qlenv('add', envdata, auth['token'])
+                res = env_manage_QL('add', envdata, auth['token'])
                 if res['code'] == 200:
                     await jdbot.delete_messages(chat_id, msg)
                     msg = await jdbot.send_message(chat_id, '已成功添加新变量')
@@ -150,8 +150,8 @@ async def my_addenv(event):
     except Exception as e:
         msg = await jdbot.send_message(chat_id, f'something wrong,I\'m sorry\n{str(e)}')
         logger.error(f'something wrong,I\'m sorry\n{str(e)}')
-if chname:
-    jdbot.add_event_handler(my_addenv, events.NewMessage(
-        from_users=chat_id, pattern=mybot['命令别名']['addenv']))
-    jdbot.add_event_handler(my_env, events.NewMessage(
-        from_users=chat_id, pattern=mybot['命令别名']['myenv']))
+if ch_name:
+    jdbot.add_event_handler(bot_addenv, events.NewMessage(
+        from_users=chat_id, pattern=BOT_SET['命令别名']['addenv']))
+    jdbot.add_event_handler(bot_env_ql, events.NewMessage(
+        from_users=chat_id, pattern=BOT_SET['命令别名']['myenv']))

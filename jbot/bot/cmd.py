@@ -1,22 +1,22 @@
 from telethon import events
-from .. import jdbot, StartCMD, chat_id, logger, mybot, chname
+from .. import jdbot, START_CMD, chat_id, logger, BOT_SET, ch_name
 from .utils import cmd
 
 
 @jdbot.on(events.NewMessage(from_users=chat_id, pattern='/cmd'))
 async def my_cmd(event):
-    '''接收/cmd命令后执行程序'''
+    """接收/cmd命令后执行程序"""
     logger.info(f'即将执行{event.raw_text}命令')
     msg_text = event.raw_text.split(' ')
     try:
-        if isinstance(msg_text,list):
+        if isinstance(msg_text, list):
             text = ' '.join(msg_text[1:])
         else:
             text = None
-        if StartCMD and text:
+        if START_CMD and text:
             await cmd(text)
             logger.info(text)
-        elif StartCMD:
+        elif START_CMD:
             msg = '''请正确使用/cmd命令，如
             /cmd jlog    # 删除旧日志
             /cmd jup     # 更新所有脚本
@@ -33,6 +33,6 @@ async def my_cmd(event):
         logger.error(f'发生了某些错误\n{str(e)}')
 
 
-if chname:
+if ch_name:
     jdbot.add_event_handler(my_cmd, events.NewMessage(
-        chats=chat_id, pattern=mybot['命令别名']['cmd']))
+        chats=chat_id, pattern=BOT_SET['命令别名']['cmd']))

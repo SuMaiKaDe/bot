@@ -1,44 +1,43 @@
 from telethon import events
-from .. import jdbot, chat_id, logger, mybot, chname, _ConfigDir
+from .. import jdbot, logger, chat_id,  BOT_SET, ch_name, CONFIG_DIR
 import requests
 import os
 import json
 import time
 
-_Auth = None
-if 'QL_DIR' in os.environ.keys():
-    _Auth = f'{_ConfigDir}/auth.json'
-    if not os.path.exists(_Auth):
-        _Auth = None
+if os.environ.get('QL_DIR'):
+    AUTH_FILE = f'{CONFIG_DIR}/auth.json'
+else:
+    AUTH_FILE = None
 
 
 @jdbot.on(events.NewMessage(chats=chat_id, pattern=r'^/auth'))
-async def my_chart(event):
-    if _Auth is None:
+async def bot_ql_login(event):
+    if AUTH_FILE is None:
         await jdbot.send_message(chat_id, '此命令仅支持青龙面板')
         return None
     msg_text = event.raw_text.split(' ')
+    msg = await jdbot.send_message(chat_id, '正在登录，请稍后')
     try:
         res = None
-        msg = await jdbot.send_message(chat_id, '正在登录，请稍后')
         if isinstance(msg_text, list) and len(msg_text) == 2:
             code_login = msg_text[-1]
             if len(code_login) == 6:
-                res = qlLogin(code_login)
+                res = ql_login(code_login)
             else:
                 res = '两步验证的验证码有误'
         else:
-            res = qlLogin()
+            res = ql_login()
         await jdbot.edit_message(msg, res)
     except Exception as e:
         await jdbot.edit_message(msg, f'something wrong,I\'m sorry\n{str(e)}')
         logger.error(f'something wrong,I\'m sorry\n{str(e)}')
 
 
-def qlLogin(code: str = None):
+def ql_login(code: str = None):
 
     try:
-        with open(_Auth, 'r', encoding='utf-8') as f:
+        with open(BOT_SET, 'r', encoding='utf-8') as f:
             auth = json.load(f)
         token = auth['token']
         if token and len(token) > 10:
@@ -67,6 +66,6 @@ def qlLogin(code: str = None):
         return '自动登录出错：' + str(e)
 
 
-if chname:
-    jdbot.add_event_handler(my_chart, events.NewMessage(
-        chats=chat_id, pattern=mybot['命令别名']['auth']))
+if ch_name:
+    jdbot.add_event_handler(bot_ql_login, events.NewMessage(
+        chats=chat_id, pattern=BOT_SET['命令别名']['auth']))

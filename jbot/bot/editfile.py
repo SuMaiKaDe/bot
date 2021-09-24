@@ -2,7 +2,7 @@ from telethon import events, Button
 import os
 import shutil
 from asyncio import exceptions
-from .. import jdbot, chat_id, _JdDir, mybot, chname
+from .. import jdbot, chat_id, JD_DIR, BOT_SET, ch_name
 from .utils import split_list, logger, press_event
 
 
@@ -12,7 +12,7 @@ async def my_edit(event):
     logger.info(f'即将执行{event.raw_text}命令')
     msg_text = event.raw_text.split(' ')
     SENDER = event.sender_id
-    path = _JdDir
+    path = JD_DIR
     page = 0
     if isinstance(msg_text,list) and len(msg_text) == 2:
         text = msg_text[-1]
@@ -38,15 +38,15 @@ async def my_edit(event):
     async with jdbot.conversation(SENDER, timeout=120) as conv:
         msg = await conv.send_message('正在查询，请稍后')
         while path:
-            path, msg, page, filelist = await myedit(conv, SENDER, path, msg, page, filelist)
+            path, msg, page, filelist = await edit_file(conv, SENDER, path, msg, page, filelist)
 
 
-if chname:
+if ch_name:
     jdbot.add_event_handler(my_edit, events.NewMessage(
-        from_users=chat_id, pattern=mybot['命令别名']['edit']))
+        from_users=chat_id, pattern=BOT_SET['命令别名']['edit']))
 
 
-async def myedit(conv, SENDER, path, msg, page, filelist):
+async def edit_file(conv, SENDER, path, msg, page, filelist):
     mybtn = [Button.inline('上一页', data='up'), Button.inline('下一页', data='next'), Button.inline(
         '上级', data='updir'), Button.inline('取消', data='cancel')]
     mybtn2 = [[Button.inline('上一页', data='up'), Button.inline(
@@ -68,14 +68,14 @@ async def myedit(conv, SENDER, path, msg, page, filelist):
                 dir.sort()
                 markup = [Button.inline(file, data=str(
                     file)) for file in dir]
-                markup = split_list(markup, int(mybot['每页列数']))
+                markup = split_list(markup, int(BOT_SET['每页列数']))
                 if len(markup) > 30:
                     markup = split_list(markup, 30)
                     newmarkup = markup[page]
                     newmarkup.append(mybtn)
                 else:
                     newmarkup = markup
-                    if path == _JdDir:
+                    if path == JD_DIR:
                         newmarkup.append([Button.inline('取消', data='cancel')])
                     else:
                         newmarkup.append(
@@ -110,7 +110,7 @@ async def myedit(conv, SENDER, path, msg, page, filelist):
         elif res == 'updir':
             path = '/'.join(path.split('/')[:-1])
             if path == '':
-                path = _JdDir
+                path = JD_DIR
             return path, msg, page,  None
         elif res == 'edit':
             await jdbot.send_message(chat_id, '请复制并修改以下内容，修改完成后发回机器人，2分钟内有效\n发送`cancel`或`取消`取消对话')
