@@ -67,8 +67,8 @@ if ch_name:
 def creat_bean_count(date, beansin, beansout, beanstotal):
     tb = PrettyTable()
     tb.add_column('DATE', date)
-    tb.add_column('BEANBEAN_IN_FILE', beansin)
-    tb.add_column('BEANOUT', beansout)
+    tb.add_column('BEANSIN', beansin)
+    tb.add_column('BEANSOUT', beansout)
     tb.add_column('TOTAL', beanstotal)
     font = ImageFont.truetype(FONT_FILE, 18)
     im = Image.new("RGB", (500, 260), (244, 244, 244))

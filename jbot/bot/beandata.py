@@ -120,7 +120,7 @@ def get_bean_data(i):
             for i in beans_res['data'][0]:
                 beantotal = int(
                     beantotal) - int(beans_res['data'][0][i]) - int(beans_res['data'][1][i])
-                beans_in.append(beans_res['data'][0][i])
-                beans_out.append(int(str(beans_out[i]).replace('-', '')))
+                beans_in.append(int(beans_res['data'][0][i]))
+                beans_out.append(int(str(beans_res['data'][1][i]).replace('-', '')))
                 beanstotal.append(beantotal)
-            return {'code': 200, 'data': [beans_in[::-1], beans_out[::-1], beanstotal[::-1], beans_res['data'][2][::-1]]}
+        return {'code': 200, 'data': [beans_in[::-1], beans_out[::-1], beanstotal[::-1], beans_res['data'][2][::-1]]}
