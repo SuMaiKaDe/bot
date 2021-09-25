@@ -82,6 +82,6 @@ async def user_login(event):
     except asyncio.exceptions.TimeoutError:
         msg = await jdbot.edit_message(msg, '登录已超时，对话已停止')
     except Exception as e:
-        await jdbot.send_message(chat_id,'登录失败\n请先执行 /rmuser 再重新登录\n'+str(e))
+        await jdbot.send_message(chat_id,'登录失败\n 再重新登录\n'+str(e))
     finally:
         await user.disconnect()
