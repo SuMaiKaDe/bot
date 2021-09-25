@@ -45,7 +45,7 @@ async def bot_set_init():
             with open(BOT_SET_JSON_FILE_USER, 'r', encoding='utf-8') as f:
                 user_set = json.load(f)
             if user_set['版本'] != bot_set['版本']:
-                for i in bot_set:
+                for i in user_set:
                     if '版本' not in i and not isinstance(user_set[i], dict):
                         bot_set[i] = user_set[i]
                     elif isinstance(user_set[i], dict):
