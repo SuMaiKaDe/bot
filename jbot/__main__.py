@@ -53,11 +53,10 @@ async def bot_set_init():
                             bot_set[i][j] = user_set[i][j]
                     else:
                         continue
+             with open(BOT_SET_JSON_FILE_USER, 'w+', encoding='utf-8') as f:
+                json.dump(bot_set, f)
     except Exception as e:
         logger.info(str(e))
-    finally:
-        with open(BOT_SET_JSON_FILE_USER, 'w+', encoding='utf-8') as f:
-            json.dump(bot_set, f)
 
 
 async def hello():
