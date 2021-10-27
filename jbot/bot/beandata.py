@@ -9,7 +9,7 @@ SHA_TZ = timezone(
     timedelta(hours=8),
     name='Asia/Shanghai',
 )
-
+requests.adapters.DEFAULT_RETRIES = 5
 session = requests.session()
 session.keep_alive = False
 
