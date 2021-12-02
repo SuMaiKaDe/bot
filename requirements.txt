@@ -1,5 +1,5 @@
 qrcode==6.1
-Telethon==1.21.1
+Telethon==1.24.0
 requests==2.25.1
 Pillow==8.1.2
 python-socks==1.2.4
