@@ -9,7 +9,6 @@ fi
 dir_bot=$dir_root/jbot
 dir_repo=$dir_root/repo
 file_bot_setting_user=$dir_root/config/bot.json
-repo_path="${dir_repo}/SuMaiKaDe_bot"
 url="https://ghproxy.com/https://github.com/SuMaiKaDe/bot.git"
 repo_path="${dir_repo}/dockerbot"
 
@@ -77,11 +76,11 @@ if [ -d ${repo_path}/.git ]; then
         notify_telegram "检测到BOT程序有更新，BOT将重启。\n\n友情提醒：如果当前有从BOT端发起的正在运行的任务，将被中断。\n\n本条消息由jup程序通过BOT发出。"
     fi
 else
-  git_clone_scripts ${url} ${repo_path} "main"
-  cp -rf "$repo_path/jbot" $dir_root
+    git_clone_scripts ${url} ${repo_path} "main"
+    cp -rf "$repo_path/jbot" $dir_root
 fi
 if [[ ! -f "$dir_root/config/bot.json" ]]; then
-  cp -f "$repo_path/config/bot.json" "$dir_root/config"
+    cp -f "$repo_path/config/bot.json" "$dir_root/config"
 fi
 echo -e "\nbot文件下载成功...\n"
 echo -e "3、安装python3依赖...\n"
@@ -95,17 +94,11 @@ if [ ! -d "/ql/log/bot" ]; then
     mkdir $dir_root/log/bot
 fi
 if [[ -z $(grep -E "123456789" $dir_root/config/bot.json) ]]; then
-    if [ -d "/ql" ]; then
-        ps -ef | grep "python3 -m jbot" | grep -v grep | awk '{print $1}' | xargs kill -9 2>/dev/null
-        nohup python3 -m jbot >$dir_root/log/bot/bot.log 2>&1 &
-        echo -e "bot启动成功...\n"
-    else
-        cd $dir_bot
-        pm2 start ecosystem.config.js
-        cd $dir_root
-        pm2 restart jbot
-        echo -e "bot启动成功...\n"
-    fi
+    cd $dir_bot
+    pm2 start ecosystem.config.js
+    cd $dir_root
+    pm2 restart jbot
+    echo -e "bot启动成功...\n"
 else
     echo -e  "似乎 $dir_root/config/bot.json 还未修改为你自己的信息，可能是首次部署容器，因此不启动Telegram Bot...\n配置好bot.json后再次运行本程序即可启动"
 fi
