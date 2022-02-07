@@ -1,4 +1,3 @@
-from PIL import Image, ImageFont, ImageDraw
 from telethon import events
 from .. import jdbot, chat_id
 from .utils import V4, cmd

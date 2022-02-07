@@ -396,29 +396,29 @@ def cron_manage_QL(fun, crondata, token):
             }
             res = requests.post(url, data=data, headers=headers).json()
         elif fun == 'run':
-            data = [crondata['_id']]
+            data = [crondata['id']]
             res = requests.put(f'{url}/run', json=data, headers=headers).json()
         elif fun == 'log':
-            data = crondata['_id']
+            data = crondata['id']
             res = requests.get(f'{url}/{data}/log', headers=headers).json()
         elif fun == 'edit':
             data = {
                 'name': crondata['name'],
                 'command': crondata['command'],
                 'schedule': crondata['schedule'],
-                '_id': crondata['_id']
+                'id': crondata['id']
             }
             res = requests.put(url, json=data, headers=headers).json()
         elif fun == 'disable':
-            data = [crondata['_id']]
+            data = [crondata['id']]
             res = requests.put(url+'/disable', json=data,
                                headers=headers).json()
         elif fun == 'enable':
-            data = [crondata['_id']]
+            data = [crondata['id']]
             res = requests.put(url+'/enable', json=data,
                                headers=headers).json()
         elif fun == 'del':
-            data = [crondata['_id']]
+            data = [crondata['id']]
             res = requests.delete(url, json=data, headers=headers).json()
         else:
             res = {'code': 400, 'data': '未知功能'}
@@ -511,20 +511,20 @@ def env_manage_QL(fun, envdata, token):
             data = {
                 'name': envdata['name'],
                 'value': envdata['value'],
-                '_id': envdata['_id'],
+                'id': envdata['id'],
                 'remarks': envdata['remarks'] if 'remarks' in envdata.keys() else ''
             }
             res = requests.put(url, json=data, headers=headers).json()
         elif fun == 'disable':
-            data = [envdata['_id']]
+            data = [envdata['id']]
             res = requests.put(url+'/disable', json=data,
                                headers=headers).json()
         elif fun == 'enable':
-            data = [envdata['_id']]
+            data = [envdata['id']]
             res = requests.put(url+'/enable', json=data,
                                headers=headers).json()
         elif fun == 'del':
-            data = [envdata['_id']]
+            data = [envdata['id']]
             res = requests.delete(url, json=data, headers=headers).json()
         else:
             res = {'code': 400, 'data': '未知功能'}
