@@ -3,7 +3,7 @@ module.exports = {
         name: "jbot",
         version: "0.9.9",
         cwd: "..",
-        script: "python",
+        script: "python3",
         args: "-m jbot",
         autorestart: true,
         watch: ["jbot"],
