@@ -129,6 +129,10 @@ async def cmd(cmdtext):
             await jdbot.delete_messages(chat_id, msg)
             await jdbot.send_message(chat_id, res)
         elif len(res) > 4000:
+            cmd_temp = re.findall(r"(.*)\.(js|py|ts|sh)",cmdtext)
+            if len(cmd_temp)>0:
+                cmd_temp = f"{cmd_temp[0][0]}.{cmd_temp[0][1]}"
+                cmdtext = cmd_temp
             tmp_log = f'{LOG_DIR}/bot/{cmdtext.split("/")[-1].split(".js")[0]}-{datetime.datetime.now().strftime("%H-%M-%S")}.log'
             with open(tmp_log, 'w+', encoding='utf-8') as f:
                 f.write(res)
